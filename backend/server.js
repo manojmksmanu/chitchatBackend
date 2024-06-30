@@ -1,9 +1,11 @@
 const express = require("express");
 const { chats } = require("./data/data");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const app = express();
 dotenv.config();
-
+app.use(cors());
+app.use(express.json());
 app.get("/", (req, res) => {
   res.send("api is running");
 });
