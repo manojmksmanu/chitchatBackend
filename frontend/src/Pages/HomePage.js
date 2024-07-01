@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
+import Login from "../component/Authentication/Login";
 
 const HomePage = () => {
   return (
-    <div>HomePage</div>
-  )
-}
+    <div>
+      <p className="text-red font-black">
+        <Login/>
+      </p>
+    </div>
+  );
+};
 
-export default HomePage
+export default HomePage;

@@ -1,8 +1,4 @@
-//chatname
-//is groupchat
-//users
-//latestmessage
-//groupadmin
+
 
 const mongoose = require("mongoose");
 const chatModel = mongoose.Schema(
@@ -32,3 +28,8 @@ const chatModel = mongoose.Schema(
 const Chat = mongoose.model("Chat", chatModel);
 
 module.exports = Chat;
+//chatname
+//is groupchat
+//users
+//latestmessage
+//groupadmin
