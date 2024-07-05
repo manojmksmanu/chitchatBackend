@@ -1,23 +1,23 @@
 const express = require("express");
-const { chats } = require("./data/data");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const userRoutes = require("./routes/userRoutes");
+const connectDB = require("./config/db");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+
 const app = express();
+app.use(express.json()); //to accept json data from the body
 dotenv.config();
+connectDB();
 app.use(cors());
-app.use(express.json());
 app.get("/", (req, res) => {
   res.send("api is running");
 });
-app.get("/api/chat", (req, res) => {
-  res.send(chats);
-});
-app.get("/api/chat/:id", (req, res) => {
-  console.log(req.params.id);
-  const singlechat = chats.find((c) => c._id === req.params.id);
-  res.send(singlechat);
-});
+
+app.use("/api", userRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, console.log(`server started on port ${PORT}`));
