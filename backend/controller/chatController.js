@@ -7,13 +7,10 @@ const Chat = require("../models/chatModel");
 //@access          Protected
 const accessChat = asyncHandler(async (req, res) => {
   const userId = req.body;
-  console.log(req.body);
-  console.log(userId);
   if (!userId) {
     console.log("UserId param not sent with request");
     return res.sendStatus(400);
   }
-
   var isChat = await Chat.find({
     isGroupChat: false,
     $and: [
@@ -23,12 +20,10 @@ const accessChat = asyncHandler(async (req, res) => {
   })
     .populate("users", "-password")
     .populate("latestMessage");
-
   isChat = await User.populate(isChat, {
     path: "latestMessage.sender",
     select: "name pic email",
   });
-
   if (isChat.length > 0) {
     res.send(isChat[0]);
   } else {

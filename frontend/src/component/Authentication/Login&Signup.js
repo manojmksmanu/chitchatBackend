@@ -3,6 +3,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [state, setState] = useState("login");
@@ -13,7 +14,7 @@ const Login = () => {
   const [pic, setPic] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPasswordIcon, setShowPasswordIcon] = useState(true);
-
+  const navigate = useNavigate();
   const submitHandlerSignup = async () => {
     setLoading(true);
     if (!name || !email || !password || !confirmPassword) {
@@ -136,6 +137,7 @@ const Login = () => {
         transition: Bounce,
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
+      navigate("/chats");
       setLoading(false);
     } catch (error) {
       toast.error(`Error: ${error.response.data.message}`, {
