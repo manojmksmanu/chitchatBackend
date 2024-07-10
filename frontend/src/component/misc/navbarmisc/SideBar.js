@@ -4,6 +4,7 @@ import { ChatState } from "../../../context/ChatProvider";
 import { toast } from "react-toastify";
 import Avtar from "../chatAvtar/Avtar";
 import LoadingAvtar from "../chatAvtar/LoadingAvtar";
+
 const SideBar = () => {
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
   const [search, setSearch] = useState("");
@@ -39,70 +40,34 @@ const SideBar = () => {
     };
     handleSearch();
   }, [search]);
-  // const accessChat = async (userId) => {
-  //   try {
-  //     setLoadingChat(true);
-  //     const config = {
-  //       headers: {
-  //         "Content-type": "application/json",
-  //         Authorization: `Bearer ${user.token}`,
-  //       },
-  //     };
-  //     console.log("inside try");
-  //     const { data } = await axios.post(
-  //       `http://localhost:5000/api/chat/chats`,
-  //       { userId },
-  //       config
-  //     );
-  //     console.log("after fetch");
-  //     if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
-  //     setSelectedChat(data);
-  //     setLoadingChat(false);
-  //   } catch (error) {
-  //     toast({
-  //       title: "Error fetching the chat",
-  //       description: error.message,
-  //       status: "error",
-  //       duration: 5000,
-  //       isClosable: true,
-  //       position: "bottom-left",
-  //     });
-  //   }
-  // };
 
   const accessChat = async (userId) => {
-
     try {
       setLoadingChat(true);
-
       const config = {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
       };
-
-      console.log("Making API request to access chat with config:", config);
-
+      console.log("inside try");
       const { data } = await axios.post(
-        `http://localhost:5000/api/chat/chats`,
-        { userId },
+        "http://localhost:5000/api/chat/chats",
+        { _id: userId },
         config
       );
-
-      console.log("API response received:", data);
-
+      await setSelectedChat(data);
+      console.log(selectedChat, "selected chat");
+      console.log(chats, "chats");
+      console.log("after fetch");
+      console.log(data, chats);
+      setChats;
       if (!chats.find((c) => c._id === data._id)) {
-        setChats([data, ...chats]);
+        return await setChats([data, ...chats]);
       }
 
-      setSelectedChat(data);
       setLoadingChat(false);
-
-      console.log("Chat access successful");
     } catch (error) {
-      console.error("Error fetching the chat:", error);
-
       toast({
         title: "Error fetching the chat",
         description: error.message,
@@ -111,8 +76,6 @@ const SideBar = () => {
         isClosable: true,
         position: "bottom-left",
       });
-
-      setLoadingChat(false);
     }
   };
 
@@ -183,6 +146,7 @@ const SideBar = () => {
                   );
                 })
               : "Sorry User Not Found"}
+            {loadingChat && "loading chat"}
           </ul>
         </div>
       </div>
