@@ -11,7 +11,7 @@ const Chats = () => {
     <div>
       <Navbar />
       <div className="flex justify-center">
-        <div className="flex w-3/4 bg-slate-400 justify-between">
+        <div className="flex w-3/4 justify-between">
           {user && <MyChats />}
           {user && <ChatBox />}
         </div>

@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { ChatState } from "../../context/ChatProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { getSender } from "../../config/ChatLogic";
 const MyChats = () => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
+
   const fetchChats = async () => {
-    console.log(user._id);
+    if (!user) return;
     try {
       const config = {
         headers: {
@@ -17,11 +19,10 @@ const MyChats = () => {
         "http://localhost:5000/api/chat/chats",
         config
       );
-      console.log(data);
       setChats(data);
     } catch (error) {
       toast({
-        title: "Error Occured!",
+        title: "Error Occurred!",
         description: "Failed to Load the chats",
         status: "error",
         duration: 5000,
@@ -32,42 +33,46 @@ const MyChats = () => {
   };
 
   useEffect(() => {
-    setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
+    const storedUser = JSON.parse(localStorage.getItem("userInfo"));
+    setLoggedUser(storedUser);
     fetchChats();
-    // eslint-disable-next-line
-  }, []);
-  console.log(chats,'chat')
+  }, [user]);
   return (
     <div>
-      <div
-        className="bg-slate-800"
-      >
+      <div className="">
         {chats ? (
-          <div overflowY="scroll">
+          <div className="w-64">
             {chats.map((chat) => (
               <div
-                onClick={() => setSelectedChat(chat)}
-                cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
-                px={3}
-                py={2}
-                borderRadius="lg"
                 key={chat._id}
+                onClick={() => setSelectedChat(chat)}
+                className={
+                  selectedChat._id === chat._id
+                    ? "bg-blue-100  px-3 py-2 border-blue-100 rounded-xl mt-1 cursor-pointer"
+                    : " px-3 py-2 border-blue-200 border-2 rounded-xl mt-1 cursor-pointer"
+                }
               >
-                <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <img
+                    className="w-5 h-5 "
+                    src={
+                      !chat.isGroupChat
+                        ? getSender(loggedUser, chat.users).pic
+                        : chat.chatName
+                    }
+                  />
                   {!chat.isGroupChat
-                    ? getSender(loggedUser, chat.users)
+                    ? getSender(loggedUser, chat.users).name
                     : chat.chatName}
                 </div>
-                {chat.latestMessage && (
+                {/* {chat.latestMessage && (
                   <div fontSize="xs">
                     <b>{chat.latestMessage.sender.name} : </b>
                     {chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}
                   </div>
-                )}
+                )} */}
               </div>
             ))}
           </div>

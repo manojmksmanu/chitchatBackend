@@ -4,6 +4,7 @@ import { ChatState } from "../../../context/ChatProvider";
 import { toast } from "react-toastify";
 import Avtar from "../chatAvtar/Avtar";
 import LoadingAvtar from "../chatAvtar/LoadingAvtar";
+import { IoSearchCircleOutline } from "react-icons/io5";
 
 const SideBar = () => {
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
@@ -11,35 +12,36 @@ const SideBar = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
+  const handleSearch = async () => {
+    try {
+      setLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.get(
+        `http://localhost:5000/api/user?search=${search}`,
+        config
+      );
+      setLoading(false);
+      setSearchResult(data);
+      console.log(searchResult);
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: "Failed to Load the Search Results",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+    // {
+    //   searchResult? setNotFound(false) : setNotFound(true);
+    // }
 
-  useEffect(() => {
-    const handleSearch = async () => {
-      try {
-        setLoading(true);
-        const config = {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        };
-        const { data } = await axios.get(
-          `http://localhost:5000/api/user?search=${search}`,
-          config
-        );
-        setLoading(false);
-        setSearchResult(data);
-      } catch (error) {
-        toast({
-          title: "Error Occured!",
-          description: "Failed to Load the Search Results",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom-left",
-        });
-      }
-    };
-    handleSearch();
-  }, [search]);
+  };
 
   const accessChat = async (userId) => {
     try {
@@ -50,22 +52,18 @@ const SideBar = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
+
       console.log("inside try");
       const { data } = await axios.post(
         "http://localhost:5000/api/chat/chats",
         { _id: userId },
         config
       );
-      await setSelectedChat(data);
-      console.log(selectedChat, "selected chat");
-      console.log(chats, "chats");
-      console.log("after fetch");
-      console.log(data, chats);
-      setChats;
+      await setSelectedChat([data]);
+     
       if (!chats.find((c) => c._id === data._id)) {
         return await setChats([data, ...chats]);
       }
-
       setLoadingChat(false);
     } catch (error) {
       toast({
@@ -78,7 +76,6 @@ const SideBar = () => {
       });
     }
   };
-
   return (
     <div>
       <div
@@ -116,10 +113,14 @@ const SideBar = () => {
         </button>
         <div class="py-4 overflow-y-auto">
           <ul class="space-y-2 font-medium">
-            <li>
+            <li className="flex">
               <input
                 onChange={(e) => setSearch(e.target.value)}
-                class=" ms-3 bg-slate-100 rounded-md focus:no-underline pl-2"
+                class=" w-3/4 bg-slate-100 rounded-md focus:no-underline pl-2"
+              />
+              <IoSearchCircleOutline
+                onClick={() => handleSearch()}
+                className="w-1/4 text-3xl text-slate-600 cursor-pointer"
               />
             </li>
             {loading && loading ? (
@@ -145,7 +146,8 @@ const SideBar = () => {
                     </div>
                   );
                 })
-              : "Sorry User Not Found"}
+              : "sorry user not found"}
+            {/* {notFound ?"" :"Soryy User Is Not Found"} */}
             {loadingChat && "loading chat"}
           </ul>
         </div>

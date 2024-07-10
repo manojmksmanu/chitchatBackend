@@ -10,7 +10,7 @@ const router = express.Router();
 // router.route("/user").post(() => {
 //   registerUser;
 // });
-router.route("/user").post(registerUser).get(protect,allUsers);
+router.route("/user").post(registerUser).get(protect, allUsers);
 router.post("/login", authUser);
 
 module.exports = router;
