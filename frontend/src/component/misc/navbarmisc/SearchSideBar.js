@@ -6,7 +6,7 @@ import Avtar from "../chatAvtar/Avtar";
 import LoadingAvtar from "../chatAvtar/LoadingAvtar";
 import { IoSearchCircleOutline } from "react-icons/io5";
 
-const SideBar = () => {
+const SearchSideBar = ({ openSearchBar, setOpenSearchBar }) => {
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -40,7 +40,6 @@ const SideBar = () => {
     // {
     //   searchResult? setNotFound(false) : setNotFound(true);
     // }
-
   };
 
   const accessChat = async (userId) => {
@@ -60,11 +59,14 @@ const SideBar = () => {
         config
       );
       await setSelectedChat([data]);
-     
+
       if (!chats.find((c) => c._id === data._id)) {
         return await setChats([data, ...chats]);
       }
       setLoadingChat(false);
+      {
+        loadingChat === false ? setOpenSearchBar(false) : "";
+      }
     } catch (error) {
       toast({
         title: "Error fetching the chat",
@@ -77,10 +79,12 @@ const SideBar = () => {
     }
   };
   return (
-    <div>
+    <div className="">
       <div
         id="drawer-navigation"
-        class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800"
+        className={`fixed inset-0 z-30 rounded-r-3xl shadow-2xl flex-none p-3 w-64 bg-neutral-50 text-white transition-transform transform ${
+          openSearchBar ? "translate-x-0" : "-translate-x-full"
+        }`}
         tabindex="-1"
         aria-labelledby="drawer-navigation-label"
       >
@@ -95,6 +99,7 @@ const SideBar = () => {
           data-drawer-hide="drawer-navigation"
           aria-controls="drawer-navigation"
           class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          onClick={() => setOpenSearchBar(false)}
         >
           <svg
             aria-hidden="true"
@@ -116,7 +121,7 @@ const SideBar = () => {
             <li className="flex">
               <input
                 onChange={(e) => setSearch(e.target.value)}
-                class=" w-3/4 bg-slate-100 rounded-md focus:no-underline pl-2"
+                class="shadow-sm w-3/4 bg-purple-100 text-slate-900 font-light rounded-md focus:no-underline pl-2"
               />
               <IoSearchCircleOutline
                 onClick={() => handleSearch()}
@@ -156,4 +161,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default SearchSideBar;

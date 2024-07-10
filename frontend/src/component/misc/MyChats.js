@@ -3,6 +3,7 @@ import { ChatState } from "../../context/ChatProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { getSender } from "../../config/ChatLogic";
+import { IoSearchOutline } from "react-icons/io5";
 const MyChats = () => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
@@ -38,23 +39,31 @@ const MyChats = () => {
     fetchChats();
   }, [user]);
   return (
-    <div>
-      <div className="">
+    <div className="">
+      <div className="relative ">
+        {/* <IoSearchOutline className="absolute top-1/2 transform translate-x-1/2" /> */}
+        <input
+          placeholder="Search"
+          className="w-full bg-purple-200 rounded-xl p-1  placeholder:text-sm pl-5 text-black"
+        />
+      </div>
+
+      <div>
         {chats ? (
-          <div className="w-64">
+          <div className="w-full">
             {chats.map((chat) => (
               <div
                 key={chat._id}
                 onClick={() => setSelectedChat(chat)}
                 className={
                   selectedChat._id === chat._id
-                    ? "bg-blue-100  px-3 py-2 border-blue-100 rounded-xl mt-1 cursor-pointer"
-                    : " px-3 py-2 border-blue-200 border-2 rounded-xl mt-1 cursor-pointer"
+                    ? "bg-purple-100  px-3 py-2 border-blue-100 rounded-xl mt-1 cursor-pointer"
+                    : " px-3 py-2  bg-slate-50  rounded-xl mt-1 cursor-pointer"
                 }
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <img
-                    className="w-5 h-5 "
+                    className="md:w-10 md:h-10 rounded"
                     src={
                       !chat.isGroupChat
                         ? getSender(loggedUser, chat.users).pic

@@ -1,35 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
+import { CiChat1, CiSearch } from "react-icons/ci";
+import { FaSearch } from "react-icons/fa";
 import { ChatState } from "../../context/ChatProvider";
-import SideBar from "./navbarmisc/SideBar";
 import { useNavigate } from "react-router-dom";
-
-const Navbar = () => {
+import SearchSideBar from "./navbarmisc/SearchSideBar";
+import { MdGroupAdd } from "react-icons/md";
+const SideNavBar = () => {
   const navigate = useNavigate();
   const { user, setUser } = ChatState();
+  const [isOpen, setIsOpen] = useState(false);
+  const [openSearchBar, setOpenSearchBar] = useState(false);
+
   const Logout = () => {
     setUser(null);
     localStorage.removeItem("userInfo");
     navigate("/");
   };
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const closeSidebar = () => {
+    setIsOpen(false);
+  };;
+  
   return (
-    <div>
-      <nav className="bg-white border-gray-200 dark:bg-gray-900">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            <div class="text-center ">
-              <button
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                type="button"
-                data-drawer-target="drawer-navigation"
-                data-drawer-show="drawer-navigation"
-                aria-controls="drawer-navigation"
-              >
-                Search Users
-              </button>
-            </div>
-          </span>
-          <SideBar />
-          <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+    <div className="flex">
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 left-0 z-30 w-12 bg-neutral-950 text-white transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 ease-in-out md:translate-x-0`}
+      >
+        <div className="flex h-screen py-4 justify-between flex-col items-center">
+          <div className="font-extrabold">CC</div>
+          <ul>
+            <li className=" cursor-pointer">
+              <CiChat1 className="text-2xl text-slate-500 hover:text-slate-50" />
+              {/* <span className="text-xs" > All Chats</span> */}
+            </li>
+            <li></li>
+            <li
+              onClick={() => setOpenSearchBar(true)}
+              className=" cursor-pointer"
+            >
+              <CiSearch className="text-2xl text-slate-500 hover:text-slate-50 mt-2" />
+            </li>
+            <li
+              className=" cursor-pointer"
+            >
+              <MdGroupAdd className="text-2xl text-slate-500 hover:text-slate-50 mt-2" />
+            </li>
+          </ul>
+          {/* --user-- profile pic */}
+          <div>
             <button
               type="button"
               data-tooltip-target="tooltip-default"
@@ -42,7 +66,7 @@ const Navbar = () => {
               {/* <span className="sr-only">Open user menu</span> */}
               <img
                 className="w-8 h-8 rounded-full"
-                src={user && user.pic}
+                src={user.pic && user.pic}
                 alt="user photo"
               />
             </button>
@@ -55,8 +79,7 @@ const Navbar = () => {
               {user && user.name}
               <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
-
-            {/* <!-- Dropdown menu --> */}
+            {/* <!-- on click menu for profile --> */}
             <div
               className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
               id="user-dropdown"
@@ -88,35 +111,23 @@ const Navbar = () => {
                 </li>
               </ul>
             </div>
-            <button
-              data-collapse-toggle="navbar-user"
-              type="button"
-              className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-              aria-controls="navbar-user"
-              aria-expanded="false"
-            >
-              <span className="sr-only">Open main menu</span>
-              <svg
-                className="w-5 h-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 17 14"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M1 1h15M1 7h15M1 13h15"
-                />
-              </svg>
-            </button>
+            {/* <!--end  on click menu for profile --> */}
           </div>
         </div>
-      </nav>
+      </div>
+      <SearchSideBar
+        openSearchBar={openSearchBar}
+        setOpenSearchBar={setOpenSearchBar}
+      />
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 z-20 md:hidden"
+          onClick={closeSidebar}
+        ></div>
+      )}
     </div>
   );
 };
 
-export default Navbar;
+export default SideNavBar;
