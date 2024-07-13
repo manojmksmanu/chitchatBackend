@@ -3,7 +3,7 @@ import React from "react";
 const Avtar = ({ data, handleFuntion }) => {
   return (
     <>
-      <li>
+      <div>
         <span
           onClick={handleFuntion}
           class="flex items-center p-2 cursor-pointer text-gray-900 rounded-lg dark:text-white bg-slate-100 hover:bg-gray-200 dark:hover:bg-gray-700 group"
@@ -13,10 +13,9 @@ const Avtar = ({ data, handleFuntion }) => {
             aria-hidden="true"
             src={data.pic}
           />
-
           <span class="ms-3">{data.name}</span>
         </span>
-      </li>
+      </div>
     </>
   );
 };
