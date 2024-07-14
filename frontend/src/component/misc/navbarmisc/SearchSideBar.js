@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { ChatState } from "../../../context/ChatProvider";
 import { toast } from "react-toastify";
@@ -65,7 +65,7 @@ const SearchSideBar = ({ openSearchBar, setOpenSearchBar }) => {
       }
       setLoadingChat(false);
       {
-        loadingChat === false ? setOpenSearchBar(false) : "";
+        loadingChat === false ? setOpenSearchBar(false) : <></>;
       }
     } catch (error) {
       toast({

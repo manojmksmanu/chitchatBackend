@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { ChatState } from "../context/ChatProvider";
-import Navbar from "../component/misc/Navbar";
 import MyChats from "../component/misc/MyChats";
 import ChatBox from "../component/misc/ChatBox";
 import SideBar from "../component/misc/navbarmisc/SearchSideBar";
