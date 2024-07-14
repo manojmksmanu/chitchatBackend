@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { getSender } from "../../config/ChatLogic";
 import { IoSearchOutline } from "react-icons/io5";
-const MyChats = () => {
+const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
 
@@ -37,19 +37,19 @@ const MyChats = () => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));
     setLoggedUser(storedUser);
     fetchChats();
-  }, [user]);
+  }, [user, fetchAgain, selectedChat]);
   return (
     <div className="">
       <div className="relative ">
         {/* <IoSearchOutline className="absolute top-1/2 transform translate-x-1/2" /> */}
-        <input
+        {/* <input
           placeholder="Search"
           className="w-full bg-purple-200 rounded-xl p-1  placeholder:text-sm pl-5 text-black"
-        />
+        /> */}
       </div>
 
       <div>
-        {chats ? (
+        {chats && chats ? (
           <div className="w-full">
             {chats.map((chat) => (
               <div
@@ -62,14 +62,17 @@ const MyChats = () => {
                 }
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <img
-                    className="md:w-10 md:h-10 rounded"
-                    src={
-                      !chat.isGroupChat
-                        ? getSender(loggedUser, chat.users).pic
-                        : chat.chatName
-                    }
-                  />
+                  <div className="md:w-10 md:h-10 rounded overflow-hidden">
+                    <img
+                      className="w-full h-full"
+                      src={
+                        !chat.isGroupChat
+                          ? getSender(loggedUser, chat.users).pic
+                          : chat.chatName
+                      }
+                    />
+                  </div>
+
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users).name
                     : chat.chatName}
