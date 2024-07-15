@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import SingleChat from "./SingleChat";
 
-const ChatBox = () => {
+const ChatBox = ({ fetchAgain, setFetchAgain }) => {
   return (
-    <div>ChatBox</div>
-  )
-}
+    <div>
+      <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+    </div>
+  );
+};
 
-export default ChatBox
+export default ChatBox;

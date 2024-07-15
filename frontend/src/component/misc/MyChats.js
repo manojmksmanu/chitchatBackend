@@ -37,7 +37,7 @@ const MyChats = () => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));
     setLoggedUser(storedUser);
     fetchChats();
-  }, [user]);
+  }, [user,selectedChat]);
   return (
     <div className="">
       <div className="relative ">

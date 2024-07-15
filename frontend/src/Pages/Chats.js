@@ -1,9 +1,8 @@
-import axios from "axios";
-import React, { useEffect } from "react";
+
+import React, { } from "react";
 import { ChatState } from "../context/ChatProvider";
 import MyChats from "../component/misc/MyChats";
 import ChatBox from "../component/misc/ChatBox";
-import SideBar from "../component/misc/navbarmisc/SearchSideBar";
 import SideNavBar from "../component/misc/SideNavBar";
 
 const Chats = () => {

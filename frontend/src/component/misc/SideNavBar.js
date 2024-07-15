@@ -5,11 +5,13 @@ import { ChatState } from "../../context/ChatProvider";
 import { useNavigate } from "react-router-dom";
 import SearchSideBar from "./navbarmisc/SearchSideBar";
 import { MdGroupAdd } from "react-icons/md";
+import GroupChat from "./groupChatModel/GroupChat";
 const SideNavBar = () => {
   const navigate = useNavigate();
   const { user, setUser } = ChatState();
   const [isOpen, setIsOpen] = useState(false);
   const [openSearchBar, setOpenSearchBar] = useState(false);
+  const [openGroupBox, setOpenGroupBox] = useState(false);
 
   const Logout = () => {
     setUser(null);
@@ -22,11 +24,10 @@ const SideNavBar = () => {
 
   const closeSidebar = () => {
     setIsOpen(false);
-  };;
-  
+  };
+
   return (
     <div className="flex">
-      {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-30 w-12 bg-neutral-950 text-white transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -47,6 +48,7 @@ const SideNavBar = () => {
               <CiSearch className="text-2xl text-slate-500 hover:text-slate-50 mt-2" />
             </li>
             <li
+              onClick={() => setOpenGroupBox(true)}
               className=" cursor-pointer"
             >
               <MdGroupAdd className="text-2xl text-slate-500 hover:text-slate-50 mt-2" />
@@ -115,6 +117,10 @@ const SideNavBar = () => {
           </div>
         </div>
       </div>
+      <GroupChat
+        openGroupBox={openGroupBox}
+        setOpenGroupBox={setOpenGroupBox}
+      />
       <SearchSideBar
         openSearchBar={openSearchBar}
         setOpenSearchBar={setOpenSearchBar}
