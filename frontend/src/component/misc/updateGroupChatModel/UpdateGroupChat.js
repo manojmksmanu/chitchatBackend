@@ -3,13 +3,15 @@ import { ToastContainer, toast } from "react-toastify";
 import { ChatState } from "../../../context/ChatProvider";
 import SelectedUserBadge from "../../misc/groupChatModel/SelectedUserBadge";
 import axios from "axios";
+import Avtar from "../chatAvtar/Avtar";
 const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
   const { user, selectedChat, setSelectedChat, chat, setChats } = ChatState();
   console.log(selectedChat);
-
+  const [searchResult, setSearchResult] = useState();
   const [rename, setRename] = useState("");
   const [loading, setLoading] = useState(false);
   const [removeLoading, setRemoveLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const handleRenameGroup = async () => {
     if (!rename) return;
     setLoading(true);
@@ -79,6 +81,72 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
       }
     }
   };
+  const handleSearchUser = async (u) => {
+    if (!u) {
+      return;
+    }
+
+    if (user) {
+      setSearchLoading(false);
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+        const { data } = await axios.get(
+          `http://localhost:5000/api/user?search=${u}`,
+          config
+        );
+        setSearchLoading(false);
+        setSearchResult(data);
+      } catch (error) {
+        setSearchLoading(false);
+        toast.error("Failed to load search results");
+      }
+    }
+  };
+  const handleAddUser = async (u) => {
+    if (selectedChat.users.find((user) => user._id === u._id)) {
+      toast.error("User is already in group");
+      return;
+    }
+
+    if (selectedChat.groupAdmin._id !== user._id) {
+      toast.error("only admin can add user");
+      return;
+    }
+
+    try {
+      setSearchLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.put(
+        `http://localhost:5000/api/chat/groupadd`,
+        {
+          chatId: selectedChat._id,
+          userId: u._id,
+        },
+        config
+      );
+
+      setSelectedChat(data);
+      setSearchLoading(false);
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setSearchLoading(false);
+    }
+  };
   if (!updateGroupBox) {
     return null;
   }
@@ -140,6 +208,26 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
                 </div>
               );
             })}
+          </div>
+          <div>
+            <div>
+              <input
+                placeholder="Search users"
+                className="w-full my-2 p-1 pl-3 rounded-md bg-blue-500 text-white placeholder:text-white"
+                onChange={(e) => handleSearchUser(e.target.value)}
+              />
+            </div>
+            {searchLoading ? <div>Loading...</div> : null}
+            {searchResult &&
+              searchResult.map((u) => (
+                <div
+                  className="mt-2 cursor-pointer"
+                  key={u._id}
+                  onClick={() => handleAddUser(u)}
+                >
+                  <Avtar data={u} />
+                </div>
+              ))}
           </div>
         </div>
         <div className="mt-4 text-right"></div>
