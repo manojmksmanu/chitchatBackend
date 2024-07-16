@@ -3,7 +3,7 @@ import SingleChat from "./SingleChat";
 
 const ChatBox = ({ fetchAgain, setFetchAgain }) => {
   return (
-    <div>
+    <div className="flex  flex-col p-3 h-full">
       <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
     </div>
   );

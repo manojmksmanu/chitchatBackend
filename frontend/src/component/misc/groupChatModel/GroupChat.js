@@ -13,7 +13,6 @@ const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
   const [groupChatName, setGroupChatName] = useState("");
   const { user, chats, setChats } = ChatState();
   const [selectedUser, setSelectedUser] = useState([]);
-  console.log(selectedUser, "selected user");
   const handleSearch = async (query) => {
     setSearch(query);
     if (!query) {

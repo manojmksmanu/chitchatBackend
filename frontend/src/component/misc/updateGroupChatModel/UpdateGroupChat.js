@@ -6,7 +6,7 @@ import axios from "axios";
 import Avtar from "../chatAvtar/Avtar";
 const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
   const { user, selectedChat, setSelectedChat, chat, setChats } = ChatState();
-  console.log(selectedChat);
+  // console.log(selectedChat);
   const [searchResult, setSearchResult] = useState();
   const [rename, setRename] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,9 +29,7 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
         },
         config
       );
-      console.log(data, "data");
       setSelectedChat(data);
-      console.log(selectedChat);
       toast.success(`group name updated`);
       setRename("");
       setLoading(false);
@@ -50,35 +48,34 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
     if (user._id !== selectedChat.groupAdmin._id) {
       toast.error("only admin can remove user");
       return;
-    } else {
-      setRemoveLoading(true);
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        };
-        const { data } = await axios.put(
-          "http://localhost:5000/api/chat/groupremove",
-          {
-            chatId: selectedChat._id,
-            userId: u._id,
-          },
-          config
-        );
-        u._id === user._id ? setSelectedChat() : setSelectedChat(data);
-        toast.success(`${u.name} removed from the ${selectedChat.chatName}`);
-        setRemoveLoading(false);
-      } catch (error) {
-        toast({
-          title: "Error Occurred!",
-          description: "Failed to Rename",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom-left",
-        });
-      }
+    }
+    setRemoveLoading(true);
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.put(
+        "http://localhost:5000/api/chat/groupremove",
+        {
+          chatId: selectedChat._id,
+          userId: u._id,
+        },
+        config
+      );
+      u._id === user._id ? setSelectedChat() : setSelectedChat(data);
+      toast.success(`${u.name} removed from the ${selectedChat.chatName}`);
+      setRemoveLoading(false);
+    } catch (error) {
+      toast({
+        title: "Error Occurred!",
+        description: "Failed to Rename",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
     }
   };
   const handleSearchUser = async (u) => {
@@ -132,9 +129,9 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
         },
         config
       );
-
       setSelectedChat(data);
       setSearchLoading(false);
+      toast.success(`${u._name} is added to group`);
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -154,7 +151,17 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
         <div className="flex justify-between items-center border-b pb-3">
-          <h3 className="text-lg font-medium">{selectedChat.chatName}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-medium">{selectedChat.chatName}</h3>
+            <span
+              className="bg-red-600 text-white text-xs p-1 rounded-md cursor-pointer"
+              onClick={() => handleRemoveUser(user)}
+            >
+              {" "}
+              Destroy Group
+            </span>
+          </div>
+
           <button
             onClick={() => setUpdateGroupBox(false)}
             className="text-gray-500 hover:text-gray-700"

@@ -2,7 +2,6 @@ import React from "react";
 
 const ProfileModel = ({ isOpen, setIsOpen, user }) => {
   if (!isOpen) {
-    console.log(isOpen);
     return null;
   }
   console.log(isOpen);
