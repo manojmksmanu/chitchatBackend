@@ -7,6 +7,10 @@ import axios from "axios";
 import UpdateGroupChat from "./updateGroupChatModel/UpdateGroupChat";
 import { toast } from "react-toastify";
 import ScrollableChat from "./scrollableChat/ScrollableChat";
+import io from "socket.io-client";
+const ENDPOINT = "http://localhost:5000";
+var socket, selectedChatCompare;
+
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat } = ChatState();
   const [isOpen, setIsOpne] = useState(false);
@@ -16,6 +20,21 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  // const [ typing, setTyping]= useState(false);
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    user && socket.emit("setup", user);
+    // socket.on("connection", () => {
+    //   setSocketConnected(true);
+    //   console.log("Socket connected");
+    // });
+  }, []);
+  console.log(socketConnected)
+  console.log(selectedChat._id);
+
+  // ---function to fetch messages --
   const fetchMessages = async (e) => {
     if (!selectedChat) return;
     try {
@@ -24,19 +43,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-
       setLoading(true);
       const { data } = await axios.get(
         `http://localhost:5000/api/message/${selectedChat._id}`,
         config
       );
-      console.log(messages);
       setMessages(data);
       setLoading(false);
+      socket.emit("join chat", selectedChat._id);
     } catch (error) {
       toast.error(error);
     }
   };
+
+  // --- function to send messages---
   const sendMessage = async (e) => {
     if (e.key === "Enter" && newMessage && newMessage.trim().length) {
       console.log(newMessage, selectedChat._id);
@@ -55,8 +75,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
-        console.log(data);
         setNewMessage(" ");
+        console.log(data);
+        socket.emit("new message", data);
         setMessages([...messages, data]);
       } catch (error) {
         toast.error(error);
@@ -68,17 +89,36 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
+
+  useEffect(() => {
+    socket.on("messageR", (newMessageRecieved) => {
+      console.log(newMessageRecieved, "new message");
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved.chat
+      ) {
+        //give notification
+      } else {
+        console.log(newMessageRecieved, "new message");
+        setMessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
     // Typing Indicator Logic
+
   };
+
   useEffect(() => {
     selectedChat && selectedChat.isGroupChat
       ? setGroupDetails(selectedChat)
       : setGroupDetails([]);
   }, [selectedChat]);
+
   return (
     <div className="h-full pb-6">
       {selectedChat.length !== 0 ? (
