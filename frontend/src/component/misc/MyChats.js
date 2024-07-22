@@ -3,7 +3,8 @@ import { ChatState } from "../../context/ChatProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { getSender } from "../../config/ChatLogic";
-import { IoSearchOutline } from "react-icons/io5";
+import ScrollableFeed from "react-scrollable-feed";
+import { motion } from "framer-motion";
 const MyChats = () => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
@@ -37,33 +38,37 @@ const MyChats = () => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));
     setLoggedUser(storedUser);
     fetchChats();
-  }, [user,selectedChat]);
+  }, [user, selectedChat]);
   return (
-    <div className="">
-      <div className="relative ">
-        {/* <IoSearchOutline className="absolute top-1/2 transform translate-x-1/2" /> */}
+    <div className="h-full flex flex-col all_chats_section ">
+      {/* Uncomment and customize if needed */}
+      {/* <div className="relative">
         <input
           placeholder="Search"
-          className="w-full bg-purple-200 rounded-xl p-1  placeholder:text-sm pl-5 text-black"
+          className="w-full bg-blue-200 rounded-xl p-1 placeholder:text-sm pl-5 text-black"
         />
-      </div>
+      </div> */}
 
-      <div>
+      <div className="flex-grow overflow-auto">
         {chats ? (
-          <div className="w-full">
+          <ScrollableFeed className="pl-3 pr-3">
             {chats.map((chat) => (
-              <div
+              <motion.div
                 key={chat._id}
                 onClick={() => setSelectedChat(chat)}
                 className={
                   selectedChat._id === chat._id
-                    ? "bg-purple-100  px-3 py-2 border-blue-100 rounded-xl mt-1 cursor-pointer"
-                    : " px-3 py-2  bg-slate-50  rounded-xl mt-1 cursor-pointer"
+                    ? "bg-slate-900 p-3 text-white  border-white border rounded-md mt-2 cursor-pointer shadow-xl"
+                    : "p-3  bg-slate-50  rounded-xl mt-2 cursor-pointer"
                 }
+                initial={{ scale: 1 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <img
-                    className="md:w-10 md:h-10 rounded"
+                    className="md:w-10 md:h-10 rounded-full shadow-md"
                     src={
                       !chat.isGroupChat
                         ? getSender(loggedUser, chat.users).pic
@@ -82,9 +87,9 @@ const MyChats = () => {
                       : chat.latestMessage.content}
                   </div>
                 )} */}
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </ScrollableFeed>
         ) : (
           // <ChatLoading />
           "loading chats"

@@ -1,41 +1,65 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "../../context/ChatProvider";
-import { FaRegMehRollingEyes } from "react-icons/fa";
 import ProfileModel from "../misc/profileModel/ProfileModel";
-import { FaRegEye } from "react-icons/fa6";
 import axios from "axios";
 import UpdateGroupChat from "./updateGroupChatModel/UpdateGroupChat";
 import { toast } from "react-toastify";
 import ScrollableChat from "./scrollableChat/ScrollableChat";
 import io from "socket.io-client";
+import Lottie from "react-lottie";
+import animationData from "../Animations/typing.json";
+import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
+import { CiMenuKebab } from "react-icons/ci";
 const ENDPOINT = "http://localhost:5000";
-var socket, selectedChatCompare;
+let socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat } = ChatState();
-  const [isOpen, setIsOpne] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [groupDetails, setGroupDetails] = useState([]);
   const [updateGroupBox, setUpdateGroupBox] = useState(false);
-
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
-  // const [ typing, setTyping]= useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
+  let typingTimeout;
 
   useEffect(() => {
     socket = io(ENDPOINT);
     user && socket.emit("setup", user);
-    // socket.on("connection", () => {
-    //   setSocketConnected(true);
-    //   console.log("Socket connected");
-    // });
-  }, []);
-  console.log(socketConnected)
-  console.log(selectedChat._id);
 
-  // ---function to fetch messages --
-  const fetchMessages = async (e) => {
+    socket.on("connection", () => {
+      setSocketConnected(true);
+      console.log("Socket connected");
+    });
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
+    // Clean up
+    return () => {
+      socket.off("typing");
+      socket.off("stop typing");
+      if (typingTimeout) clearTimeout(typingTimeout);
+    };
+  }, [user]);
+
+  useEffect(() => {
+    fetchMessages();
+    selectedChatCompare = selectedChat;
+  }, [selectedChat]);
+
+  const fetchMessages = async () => {
     if (!selectedChat) return;
     try {
       const config = {
@@ -52,14 +76,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(false);
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
-      toast.error(error);
+      toast.error("Error fetching messages");
+      setLoading(false);
     }
   };
 
-  // --- function to send messages---
   const sendMessage = async (e) => {
-    if (e.key === "Enter" && newMessage && newMessage.trim().length) {
-      console.log(newMessage, selectedChat._id);
+    if (e.key === "Enter" && newMessage.trim()) {
       try {
         const config = {
           headers: {
@@ -69,123 +92,141 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
         const { data } = await axios.post(
           "http://localhost:5000/api/message/message",
-          {
-            content: newMessage,
-            chatId: selectedChat._id,
-          },
+          { content: newMessage, chatId: selectedChat._id },
           config
         );
-        setNewMessage(" ");
-        console.log(data);
+        setNewMessage("");
         socket.emit("new message", data);
         setMessages([...messages, data]);
+        socket.emit("stop typing", selectedChat._id);
       } catch (error) {
-        toast.error(error);
+        toast.error("Error sending message");
       }
-    } else {
-      return null;
     }
   };
 
-  useEffect(() => {
-    fetchMessages();
-    selectedChatCompare = selectedChat;
-  }, [selectedChat]);
-
-  useEffect(() => {
-    socket.on("messageR", (newMessageRecieved) => {
-      console.log(newMessageRecieved, "new message");
-      if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== newMessageRecieved.chat
-      ) {
-        //give notification
-      } else {
-        console.log(newMessageRecieved, "new message");
-        setMessages([...messages, newMessageRecieved]);
-      }
-    });
-  });
-
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
-    // Typing Indicator Logic
-
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+    if (typingTimeout) clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      setTyping(false);
+      socket.emit("stop typing", selectedChat._id);
+    }, 300000); // 3 seconds for example
   };
 
   useEffect(() => {
-    selectedChat && selectedChat.isGroupChat
-      ? setGroupDetails(selectedChat)
-      : setGroupDetails([]);
+    socket.on("messageR", (newMessageReceived) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageReceived.chat
+      ) {
+        // Handle notification logic
+      } else {
+        setMessages([...messages, newMessageReceived]);
+      }
+    });
+  }, [messages]);
+
+  useEffect(() => {
+    if (selectedChat && selectedChat.isGroupChat) {
+      setGroupDetails(selectedChat);
+    } else {
+      setGroupDetails([]);
+    }
   }, [selectedChat]);
 
   return (
-    <div className="h-full pb-6">
-      {selectedChat.length !== 0 ? (
+    <div className="h-full pb-6 flex flex-col">
+      {(Array.isArray(selectedChat) && selectedChat.length === 0) ||
+      !selectedChat ? (
+        <div className="flex items-center justify-center flex-grow">
+          <h3>Click on a user to start chatting</h3>
+        </div>
+      ) : (
         <>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center p-4  text-black ">
             <div>
-              {selectedChat && !selectedChat.isGroupChat ? (
-                <div>
-                  {selectedChat.users.find((u) => u._id !== user._id).name}
-                  {/* {selectedChat.users.filter((u) => u._id !== user._id)[0].name} */}
+              {!selectedChat.isGroupChat ? (
+                <div className="flex gap-2">
+                  {(selectedChat.users &&
+                    selectedChat.users.find((u) => u._id !== user._id)?.name) ||
+                    "User not found"}
+                  {isTyping && (
+                    <motion.div
+                      className="flex items-center justify-center"
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ backgroundColor: "transparent" }}
+                    >
+                      <Lottie
+                        options={defaultOptions}
+                        height={40}
+                        width={70}
+                        style={{
+                          marginBottom: 15,
+                          marginLeft: 0,
+                          borderRadius: 100,
+                        }}
+                      />
+                    </motion.div>
+                  )}
                 </div>
               ) : (
                 <div>{selectedChat.chatName}</div>
               )}
             </div>
             <div>
-              {selectedChat && !selectedChat.isGroupChat ? (
-                <FaRegMehRollingEyes
+              {!selectedChat.isGroupChat ? (
+                <CiMenuKebab
                   className="cursor-pointer"
-                  onClick={(e) => setIsOpne(e)}
+                  onClick={() => setIsOpen(true)}
                 />
               ) : (
-                <FaRegEye
+                <CiMenuKebab
                   className="cursor-pointer"
                   onClick={() => setUpdateGroupBox(true)}
                 />
               )}
             </div>
-
             <UpdateGroupChat
               updateGroupBox={updateGroupBox}
               setUpdateGroupBox={setUpdateGroupBox}
-              //   groupDetails={groupDetails}
-              //   fetchAgain={fetchAgain}
-              //   setFetchAgain={setFetchAgain}
             />
             <ProfileModel
-              user={selectedChat.users.find((u) => u._id !== user._id)}
+              user={
+                selectedChat.users &&
+                selectedChat.users.find((u) => u._id !== user._id)
+              }
               isOpen={isOpen}
-              setIsOpen={setIsOpne}
+              setIsOpen={setIsOpen}
             />
           </div>
-          <div className="flex flex-col content-end justify-end w-full h-full ">
+          <div className="flex flex-col flex-grow overflow-hidden">
             {loading ? (
-              "loading..."
+              <div className="flex items-center justify-center flex-grow">
+                Loading...
+              </div>
             ) : (
-              <div className=" flex flex-col overflow-y-hidden">
+              <div className="flex flex-col-reverse overflow-y-auto flex-grow">
                 <ScrollableChat messages={messages} />
               </div>
             )}
 
-            {/* <form onSubmit={sendMessage}> */}
             <input
-              className="mt-3 drop-shadow-lg p-2 pl-4 rounded-2xl"
-              placeholder="enter a message"
-              onChange={(e) => typingHandler(e)}
+              className="mt-3 p-2 pl-4 rounded-md border border-gray-300"
+              placeholder="Enter a message"
+              onChange={typingHandler}
               value={newMessage}
               onKeyDown={sendMessage}
             />
-            {/* </form> */}
           </div>
         </>
-      ) : (
-        <div>
-          {" "}
-          <h3>Click on a uer to start chatting</h3>{" "}
-        </div>
       )}
     </div>
   );

@@ -7,12 +7,12 @@ const messageRoutes = require("./routes/messageRoutes");
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
-dotenv.config(); // Load environment variables
-connectDB(); // Connect to the database
+dotenv.config();
+connectDB();
 
 const app = express();
-app.use(express.json()); // To accept JSON data from the body
-app.use(cors()); // Enable CORS
+app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("API is running");
@@ -38,8 +38,7 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-  // socket is like client all information of client
-  console.log("Connected to socket.io hello");
+  console.log("Connected to socket.io");
 
   socket.on("setup", (userData) => {
     socket.join(userData._id);
@@ -52,12 +51,20 @@ io.on("connection", (socket) => {
     console.log("User joined chat room: " + room);
   });
 
-
   socket.on("new message", (newMessageRecieved) => {
     io.to(newMessageRecieved.chat).emit("messageR", newMessageRecieved);
   });
 
-  // socket.on("disconnect", () => {
-  //   console.log("Socket disconnected");
-  // });
+  socket.on("typing", (room) => {
+    socket.in(room).emit("typing");
+  });
+
+  socket.on("stop typing", (room) => {
+    // due to this socket.in(room) only reciver can get this emit('stop typing')
+    socket.in(room).emit("stop typing");
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Socket disconnected");
+  });
 });
