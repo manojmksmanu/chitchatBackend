@@ -3,6 +3,7 @@ import ScrollableFeed from "react-scrollable-feed";
 import { isLastMessage, isSameSender } from "../../../config/ChatLogic";
 import { ChatState } from "../../../context/ChatProvider";
 import Avtar from "../chatAvtar/Avtar";
+import { motion } from "framer-motion";
 const ScrollableChat = ({ messages }) => {
   const { user } = ChatState();
   return (
@@ -23,22 +24,23 @@ const ScrollableChat = ({ messages }) => {
                 <div
                   className={
                     m.sender._id !== user._id
-                      ? "mt-1"
-                      : `flex justify-end mt-1 w-full`
+                      ? "mt-1 flex flex-wrap"
+                      : `flex justify-end mt-1 w-full flex-wrap`
                   }
                 >
-                  <span
-                    style={{
-                      backgroundColor: `${
-                        m.sender._id === user._id ? "#BEE3F8" : "#B9F5D0"
-                      }`,
-                      borderRadius: "20px",
-                      padding: "5px 15px",
-                      maxWidth: "100%",
-                    }}
+                  <motion.span
+                    className={
+                      m.sender._id === user._id
+                        ? "bg-white p-2 text-xs text-slate-700  border-white border rounded-md shadow-xl flex flex-wrap"
+                        : "bg-slate-900 p-2 text-xs text-white  border-white border rounded-md shadow-xl flex flex-wrap"
+                    }
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.2 }}
                   >
                     {m.content}
-                  </span>
+                  </motion.span>
                 </div>
               </div>
             );

@@ -8,8 +8,10 @@ import ScrollableChat from "./scrollableChat/ScrollableChat";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../Animations/typing.json";
-import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
+import MessageLoading from "../Animations/myMessageLoading.json";
+import { motion, AnimatePresence } from "framer-motion";
 import { CiMenuKebab } from "react-icons/ci";
+
 const ENDPOINT = "http://localhost:5000";
 let socket, selectedChatCompare;
 
@@ -25,7 +27,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
-  const defaultOptions = {
+  const typingIndicatorOptions = {
     loop: true,
     autoplay: true,
     animationData: animationData,
@@ -33,6 +35,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+
+  // const myMessageLoadingOptions = {
+  //   loop: true,
+  //   autoplay: true,
+  //   animationData: MessageLoading,
+  //   rendererSettings: {
+  //     preserveAspectRatio: "xMidYMid slice",
+  //   },
+  // };
 
   let typingTimeout;
 
@@ -115,7 +126,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     typingTimeout = setTimeout(() => {
       setTyping(false);
       socket.emit("stop typing", selectedChat._id);
-    }, 300000); // 3 seconds for example
+    }, 3000); // 3 seconds
   };
 
   useEffect(() => {
@@ -148,7 +159,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         </div>
       ) : (
         <>
-          <div className="flex justify-between items-center p-4  text-black ">
+          <div className="flex justify-between items-center p-4 text-black">
             <div>
               {!selectedChat.isGroupChat ? (
                 <div className="flex gap-2">
@@ -158,14 +169,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   {isTyping && (
                     <motion.div
                       className="flex items-center justify-center"
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, y: 20 }}
                       transition={{ duration: 0.3 }}
                       style={{ backgroundColor: "transparent" }}
                     >
                       <Lottie
-                        options={defaultOptions}
+                        options={typingIndicatorOptions}
                         height={40}
                         width={70}
                         style={{
@@ -210,7 +221,19 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           <div className="flex flex-col flex-grow overflow-hidden">
             {loading ? (
               <div className="flex items-center justify-center flex-grow">
-                Loading...
+                <motion.div
+                  className="flex items-center justify-center"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <Lottie
+                    options={typingIndicatorOptions}
+                    
+                  />
+                </motion.div>
               </div>
             ) : (
               <div className="flex flex-col-reverse overflow-y-auto flex-grow">
