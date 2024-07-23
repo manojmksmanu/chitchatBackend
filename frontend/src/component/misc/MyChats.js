@@ -5,10 +5,11 @@ import { toast } from "react-toastify";
 import { getSender } from "../../config/ChatLogic";
 import ScrollableFeed from "react-scrollable-feed";
 import { motion } from "framer-motion";
+
 const MyChats = () => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
-
+  console.log(selectedChat);
   const fetchChats = async () => {
     if (!user) return;
     try {
@@ -39,6 +40,7 @@ const MyChats = () => {
     setLoggedUser(storedUser);
     fetchChats();
   }, [user, selectedChat]);
+
   return (
     <div className="h-full flex flex-col all_chats_section ">
       {/* Uncomment and customize if needed */}
@@ -57,9 +59,9 @@ const MyChats = () => {
                 key={chat._id}
                 onClick={() => setSelectedChat(chat)}
                 className={
-                  selectedChat._id === chat._id
-                    ? "bg-slate-900 p-3 text-white  border-white border rounded-md mt-2 cursor-pointer shadow-xl"
-                    : "p-3  bg-slate-50  rounded-xl mt-2 cursor-pointer"
+                  selectedChat._id && selectedChat._id === chat._id
+                    ? "bg-slate-900 p-3 text-white border-white border rounded-md mt-2 cursor-pointer shadow-xl"
+                    : "p-3 bg-slate-50 rounded-xl mt-2 cursor-pointer"
                 }
                 initial={{ scale: 1 }}
                 whileHover={{ scale: 1.02 }}
@@ -67,14 +69,19 @@ const MyChats = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <img
-                    className="md:w-10 md:h-10 rounded-full shadow-md"
-                    src={
-                      !chat.isGroupChat
-                        ? getSender(loggedUser, chat.users).pic
-                        : chat.chatName
-                    }
-                  />
+                  {!chat.isGroupChat ? (
+                    <img
+                      className="md:w-10 md:h-10 rounded-full shadow-md"
+                      src={getSender(loggedUser, chat.users).pic}
+                      alt="chat-pic"
+                    />
+                  ) : (
+                     <img
+                      className="md:w-10 md:h-10 rounded-full shadow-md"
+                      src={chat.groupPic}
+                      alt="chat-pic"
+                    />
+                  )}
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users).name
                     : chat.chatName}

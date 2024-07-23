@@ -13,6 +13,7 @@ const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
   const [groupChatName, setGroupChatName] = useState("");
   const { user, chats, setChats } = ChatState();
   const [selectedUser, setSelectedUser] = useState([]);
+  const [groupPic, setGroupPic] = useState();
   const handleSearch = async (query) => {
     setSearch(query);
     if (!query) {
@@ -74,6 +75,7 @@ const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
         {
           name: groupChatName,
           users: JSON.stringify(selectedUser.map((u) => u._id)),
+          groupPic: groupPic,
         },
         config
       );
@@ -83,6 +85,46 @@ const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
       setOpenGroupBox(false);
     } catch (error) {
       toast.error("Group Not Created", error);
+    }
+  };
+  const postDetails = async (pics) => {
+    setLoading(true);
+    if (!pics) {
+      toast.error("Please select an image");
+      setLoading(false);
+      return;
+    }
+
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "mernchatapp");
+      data.append("cloud_name", "dxzu6oq4p");
+
+      try {
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/dxzu6oq4p/image/upload`,
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+
+        const result = await res.json();
+        if (result.secure_url) {
+          setGroupPic(result.secure_url);
+          toast.success("Image uploaded successfully");
+        } else {
+          throw new Error(result.error.message);
+        }
+      } catch (error) {
+        toast.error(`Failed to upload image: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      toast.warn("Please select a JPEG or PNG image");
+      setLoading(false);
     }
   };
 
@@ -102,6 +144,12 @@ const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
         </div>
         <div className="flex flex-col mt-4">
           <form>
+            <input
+              type="file"
+              id="default-search"
+              className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none mt-3"
+              onChange={(e) => postDetails(e.target.files[0])}
+            />
             <input
               className="mb-2 p-2 border rounded w-full"
               placeholder="Group Name"

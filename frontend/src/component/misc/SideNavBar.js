@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import SearchSideBar from "./navbarmisc/SearchSideBar";
 import { MdGroupAdd } from "react-icons/md";
 import GroupChat from "./groupChatModel/GroupChat";
+import { FaUserGroup } from "react-icons/fa6";
 const SideNavBar = () => {
   const navigate = useNavigate();
   const { user, setUser } = ChatState();
@@ -40,6 +41,10 @@ const SideNavBar = () => {
               <CiChat1 className="text-2xl text-slate-500 hover:text-slate-50" />
               {/* <span className="text-xs" > All Chats</span> */}
             </li>
+            <li className=" cursor-pointer">
+              <FaUserGroup className="text-2xl text-slate-500 hover:text-slate-50" />
+              {/* <span className="text-xs" > All Chats</span> */}
+            </li>
             <li></li>
             <li
               onClick={() => setOpenSearchBar(true)}
@@ -68,7 +73,7 @@ const SideNavBar = () => {
               {/* <span className="sr-only">Open user menu</span> */}
               <img
                 className="w-8 h-8 rounded-full"
-                src={user.pic && user.pic}
+                src={user && user.pic}
                 alt="user photo"
               />
             </button>

@@ -17,6 +17,11 @@ const chatModel = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    groupPic: {
+      type: String,
+      default:
+        "https://static.vecteezy.com/system/resources/thumbnails/004/320/558/small_2x/group-icon-isolated-sign-symbol-illustration-five-people-gathered-icons-black-and-white-design-free-vector.jpg", // A default picture for groups without a custom picture
+    },
   },
   {
     timestamps: true,
@@ -26,8 +31,3 @@ const chatModel = mongoose.Schema(
 const Chat = mongoose.model("Chat", chatModel);
 
 module.exports = Chat;
-//chatname
-//is groupchat
-//users
-//latestmessage
-//groupadmin

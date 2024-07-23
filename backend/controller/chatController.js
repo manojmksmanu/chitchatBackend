@@ -79,7 +79,9 @@ const createGroupChat = asyncHandler(async (req, res) => {
   }
 
   var users = JSON.parse(req.body.users);
-
+  const { groupPic } = req.body; // Get the group picture URL
+  console.log(groupPic)
+  console.log(req.body)
   if (users.length < 2) {
     return res
       .status(400)
@@ -94,6 +96,7 @@ const createGroupChat = asyncHandler(async (req, res) => {
       users: users,
       isGroupChat: true,
       groupAdmin: req.user,
+      groupPic: groupPic, // Set the group picture or default
     });
 
     const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
