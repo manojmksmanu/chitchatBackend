@@ -3,7 +3,7 @@ import { RxCross1 } from "react-icons/rx";
 const SelectedUserBadge = ({ data }) => {
   console.log(data);
   return (
-    <div className="bg-purple-600 text-white p-2 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-purple-400">
+    <div className="bg-slate-800 text-white p-2 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-slate-700">
       {data && data.name}
       <span>
         <RxCross1 />{" "}

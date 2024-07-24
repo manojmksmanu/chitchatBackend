@@ -224,7 +224,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             {loading ? (
               <div className="flex items-center justify-center flex-grow">
                 <motion.div
-                  className="flex items-center justify-center"
+                  className="flex items-center justify-center z-10"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, y: 20 }}

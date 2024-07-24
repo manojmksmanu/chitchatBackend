@@ -142,62 +142,67 @@ const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
             &times;
           </button>
         </div>
-        <div className="flex flex-col mt-4">
-          <form>
-            <input
-              type="file"
-              id="default-search"
-              className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none mt-3"
-              onChange={(e) => postDetails(e.target.files[0])}
-            />
-            <input
-              className="mb-2 p-2 border rounded w-full"
-              placeholder="Group Name"
-              onChange={(e) => setGroupChatName(e.target.value)}
-              value={groupChatName}
-            />
-            <input
-              className="mb-2 p-2 border rounded w-full"
-              placeholder="Search Users You want to add in a group"
-              onChange={(e) => handleSearch(e.target.value)}
-              value={search}
-            />
-          </form>
-          {/* render Selected user */}
-          <div className="flex gap-2 flex-wrap">
-            {selectedUser &&
-              selectedUser.map((user) => (
-                <div
-                  key={user._id}
-                  className="mt-2"
-                  onClick={() => handleRemove(user)}
-                >
-                  <SelectedUserBadge
-                    data={user}
-                    //   handleFuntion={(e) => handleRemove(e)}
-                  />
-                </div>
-              ))}
-          </div>
-          {loading ? <div>Loading...</div> : null}
-          {searchResult &&
-            searchResult.map((user) => (
-              <div
-                className="mt-2 cursor-pointer"
-                key={user._id}
-                onClick={() => handleGroup(user)}
-              >
-                <Avatar data={user} />
+        {/* //bottom of line //  */}
+        <div className="h-full update_group_scroll">
+          <div className="max-h-52 h-full overflow-y-auto p-2  z-50">
+            <div className="flex flex-col mt-4">
+              <form>
+                <input
+                  type="file"
+                  id="default-search"
+                  className="block w-full text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none "
+                  onChange={(e) => postDetails(e.target.files[0])}
+                />
+                <input
+                  className="mb-2 p-2 border rounded-lg mt-2 w-full"
+                  placeholder="Group Name"
+                  onChange={(e) => setGroupChatName(e.target.value)}
+                  value={groupChatName}
+                />
+                <input
+                  className="mb-2 p-2 border rounded-lg w-full"
+                  placeholder="Search Users You want to add in a group"
+                  onChange={(e) => handleSearch(e.target.value)}
+                  value={search}
+                />
+              </form>
+              {/* render Selected user */}
+              <div className="flex gap-2 flex-wrap">
+                {selectedUser &&
+                  selectedUser.map((user) => (
+                    <div
+                      key={user._id}
+                      className="mt-2"
+                      onClick={() => handleRemove(user)}
+                    >
+                      <SelectedUserBadge
+                        data={user}
+                        //   handleFuntion={(e) => handleRemove(e)}
+                      />
+                    </div>
+                  ))}
               </div>
-            ))}
-        </div>
-        <div className="mt-4 text-right">
-          <button
-            onClick={() => handleSubmit()}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Create Group
-          </button>
+              {loading ? <div>Loading...</div> : null}
+              {searchResult &&
+                searchResult.map((user) => (
+                  <div
+                    className="mt-2 cursor-pointer"
+                    key={user._id}
+                    onClick={() => handleGroup(user)}
+                  >
+                    <Avatar data={user} />
+                  </div>
+                ))}
+            </div>
+            <div className="mt-4 text-right">
+              <button
+                onClick={() => handleSubmit()}
+                className="px-4 py-2 bg-slate-900 text-white rounded"
+              >
+                Create Group
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <ToastContainer />

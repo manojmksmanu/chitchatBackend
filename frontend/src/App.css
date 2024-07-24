@@ -54,3 +54,24 @@ body {
     background: transparent;
   }
 }
+.update_group_scroll{
+    /* width */
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: black;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: grey;
+  }
+}
