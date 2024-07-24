@@ -80,8 +80,6 @@ const createGroupChat = asyncHandler(async (req, res) => {
 
   var users = JSON.parse(req.body.users);
   const { groupPic } = req.body; // Get the group picture URL
-  console.log(groupPic)
-  console.log(req.body)
   if (users.length < 2) {
     return res
       .status(400)

@@ -35,16 +35,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-
-  // const myMessageLoadingOptions = {
-  //   loop: true,
-  //   autoplay: true,
-  //   animationData: MessageLoading,
-  //   rendererSettings: {
-  //     preserveAspectRatio: "xMidYMid slice",
-  //   },
-  // };
-
   let typingTimeout;
 
   useEffect(() => {
@@ -151,7 +141,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }, [selectedChat]);
 
   return (
-    <div className="h-full pb-6 flex flex-col">
+    <div className="h-full pb-1 flex flex-col w-full">
       {(Array.isArray(selectedChat) && selectedChat.length === 0) ||
       !selectedChat ? (
         <div className="flex items-center justify-center flex-grow">
@@ -160,38 +150,50 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       ) : (
         <>
           <div className="flex justify-between items-center p-4 text-black">
-            <div>
-              {!selectedChat.isGroupChat ? (
-                <div className="flex gap-2">
+            {!selectedChat.isGroupChat ? (
+              <div className="flex gap-2  items-center">
+                <img
+                  className="w-10 h-10 rounded-full"
+                  src={
+                    (selectedChat.users &&
+                      selectedChat.users.find((u) => u._id !== user._id)
+                        ?.pic) ||
+                    "User not found"
+                  }
+                />
+                <span className="font-medium">
+                  {" "}
                   {(selectedChat.users &&
                     selectedChat.users.find((u) => u._id !== user._id)?.name) ||
                     "User not found"}
-                  {isTyping && (
-                    <motion.div
-                      className="flex items-center justify-center"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, y: 20 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ backgroundColor: "transparent" }}
-                    >
-                      <Lottie
-                        options={typingIndicatorOptions}
-                        height={40}
-                        width={70}
-                        style={{
-                          marginBottom: 15,
-                          marginLeft: 0,
-                          borderRadius: 100,
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                </div>
-              ) : (
-                <div>{selectedChat.chatName}</div>
-              )}
-            </div>
+                </span>
+
+                {isTyping && (
+                  <motion.div
+                    className="flex items-center justify-center"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ backgroundColor: "transparent" }}
+                  >
+                    <Lottie
+                      options={typingIndicatorOptions}
+                      height={40}
+                      width={70}
+                      style={{
+                        marginBottom: 15,
+                        marginLeft: 0,
+                        borderRadius: 100,
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </div>
+            ) : (
+              <div>{selectedChat.chatName}</div>
+            )}
+
             <div>
               {!selectedChat.isGroupChat ? (
                 <CiMenuKebab
@@ -218,7 +220,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               setIsOpen={setIsOpen}
             />
           </div>
-          <div className="flex flex-col flex-grow overflow-hidden">
+          <div className="flex flex-col flex-grow overflow-hidden ">
             {loading ? (
               <div className="flex items-center justify-center flex-grow">
                 <motion.div
@@ -229,20 +231,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   transition={{ duration: 0.3 }}
                   style={{ backgroundColor: "transparent" }}
                 >
-                  <Lottie
-                    options={typingIndicatorOptions}
-                    
-                  />
+                  <Lottie options={typingIndicatorOptions} />
                 </motion.div>
               </div>
             ) : (
-              <div className="flex flex-col-reverse overflow-y-auto flex-grow">
+              <div className="flex flex-col flex-grow overflow-hidden">
                 <ScrollableChat messages={messages} />
               </div>
             )}
-
             <input
-              className="mt-3 p-2 pl-4 rounded-md border border-gray-300"
+              className="mt-3 p-2 pl-4 rounded-md border border-gray-300 "
               placeholder="Enter a message"
               onChange={typingHandler}
               value={newMessage}
