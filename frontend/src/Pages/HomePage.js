@@ -12,10 +12,9 @@ const HomePage = () => {
     }
   }, [navigate]);
   return (
-    <div>
-      <p className="text-red font-black">
+    <div className="overflow-y-auto">
         <Login />
-      </p>
+    
     </div>
   );
 };

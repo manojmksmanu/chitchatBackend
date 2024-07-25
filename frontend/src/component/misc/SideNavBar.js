@@ -7,10 +7,12 @@ import SearchSideBar from "./navbarmisc/SearchSideBar";
 import { MdGroupAdd } from "react-icons/md";
 import GroupChat from "./groupChatModel/GroupChat";
 import { FaUserGroup } from "react-icons/fa6";
-const SideNavBar = () => {
+import { motion } from "framer-motion";
+
+const SideNavBar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
   const { user, setUser } = ChatState();
-  const [isOpen, setIsOpen] = useState(false);
+
   const [openSearchBar, setOpenSearchBar] = useState(false);
   const [openGroupBox, setOpenGroupBox] = useState(false);
 
@@ -35,17 +37,31 @@ const SideNavBar = () => {
         } transition-transform duration-300 ease-in-out md:translate-x-0`}
       >
         <div className="flex h-screen py-4 justify-between flex-col items-center">
-          <div className="font-extrabold">CC</div>
+          <div className="font-extrabold">
+            C
+            <motion.span
+              animate={{
+                rotate: [0, 20, -20, 0],
+              }}
+              transition={{
+                duration: 2,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "loop",
+              }}
+              className="inline-block"
+            >
+              C
+            </motion.span>
+          </div>
           <ul>
-            <li className=" cursor-pointer">
+            {/* <li className=" cursor-pointer">
               <CiChat1 className="text-2xl text-slate-500 hover:text-slate-50" />
-              {/* <span className="text-xs" > All Chats</span> */}
             </li>
             <li className=" cursor-pointer">
               <FaUserGroup className="text-2xl text-slate-500 hover:text-slate-50" />
-              {/* <span className="text-xs" > All Chats</span> */}
             </li>
-            <li></li>
+            <li></li> */}
             <li
               onClick={() => setOpenSearchBar(true)}
               className=" cursor-pointer"

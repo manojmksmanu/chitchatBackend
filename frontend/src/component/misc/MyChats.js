@@ -5,8 +5,10 @@ import { toast } from "react-toastify";
 import { getSender } from "../../config/ChatLogic";
 import ScrollableFeed from "react-scrollable-feed";
 import { motion, AnimatePresence } from "framer-motion";
+import { CiMenuBurger } from "react-icons/ci";
+import { IoNotificationsCircleOutline } from "react-icons/io5";
 
-const MyChats = () => {
+const MyChats = ({ isOpen, setIsOpen }) => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
 
@@ -46,7 +48,28 @@ const MyChats = () => {
   }, [user, selectedChat]);
 
   return (
-    <div className="h-full flex flex-col all_chats_section">
+    // <div>
+    <div className="h-full flex flex-col all_chats_section relative">
+      <div
+        className={`md:hidden w-full h-10 bg-slate-900 text-white flex justify-between items-center p-2`}
+      >
+        <div className="font-extrabold flex gap-2">
+          CC
+          <div class="flex gap-1 justify-center items-center">
+            {/* <span class="sr-only">...</span> */}
+            <div class="h-1 w-1 bg-white rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div class="h-1 w-1 bg-white rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div class="h-1 w-1 bg-white rounded-full animate-bounce"></div>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <IoNotificationsCircleOutline className="cursor-pointer" />
+          <CiMenuBurger
+            className="cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          />
+        </div>
+      </div>
       <div className="flex-grow overflow-auto">
         {chats ? (
           <ScrollableFeed className="pl-3 pr-3">
@@ -115,6 +138,7 @@ const MyChats = () => {
         )}
       </div>
     </div>
+    // </div>
   );
 };
 

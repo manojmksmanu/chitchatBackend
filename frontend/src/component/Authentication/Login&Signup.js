@@ -4,6 +4,7 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const [state, setState] = useState("login");
@@ -237,74 +238,61 @@ const Login = () => {
   };
 
   return (
-    <div className="flex xl:m-0 mt-5 xl:h-screen h-full items-center">
-      <section className="w-full bg-white rounded-lg md:mt-0 sm:max-w-screen-md m-10">
-        <div>
+    <div className="flex  overflow-y-auto h-screen justify-center items-center  sm:m-0 m-2 drop-shadow-xl ">
+      <motion.section
+        className="w-full bg-white rounded-lg  sm:max-w-72"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, y: 10 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="rounded-md p-4 flex flex-col items-center">
           {/* --top-- */}
-          <div>
-            <h2 className="text-5xl text-start text-green-600">BlahBlah,</h2>
-            <h2 className="text-5xl text-green-600">Welcome Back</h2>
+          <div className="flex flex-col items-center">
+            <h2 className="text-xl  text-slate-900">ChitChat,</h2>
+            <h2 className="text-xl text-slate-900">Welcome Back</h2>
             <p className="text-sm text-slate-700">
               Hey, welcome back to your special place
             </p>
           </div>
           {/* --middle--  */}
-          <form>
-            <div className="my-7">
-              <div className="relative">
-                <input
-                  type="text"
-                  id="default-search"
-                  className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg my-3 focus:outline-none"
-                  placeholder="Enter Your Name...."
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
-                  required
-                />
-              </div>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="default-search"
-                  className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg my-3 focus:outline-none"
-                  placeholder="Enter Your Email...."
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  required
-                />
-              </div>
-              <div className="relative">
-                <input
-                  type={showPasswordIcon ? "password" : "text"}
-                  id="default-search"
-                  className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none"
-                  placeholder="Enter Your Password...."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute end-2.5 bottom-2.5 text-slate-700"
-                  onClick={() => setShowPasswordIcon(!showPasswordIcon)}
-                >
-                  {showPasswordIcon ? (
-                    <FaRegEye className="color-slate-700" />
-                  ) : (
-                    <FaRegEyeSlash className="color-slate-700" />
-                  )}
-                </button>
-              </div>
-              {state === "signup" && (
-                <>
+          <form className="w-full">
+            {/* --all inputs--  */}
+            <div className=" mb-4  update_group_scroll ">
+              <div className="overflow-auto max-h-36 h-full pr-2">
+                <div className="w-full">
+                  <div className="relative">
+                    {state === "signup" && (
+                      <input
+                        type="text"
+                        id="default-search"
+                        className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg my-2 focus:outline-none"
+                        placeholder="Enter Your Name...."
+                        onChange={(e) => setName(e.target.value)}
+                        value={name}
+                        required
+                      />
+                    )}
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="default-search"
+                      className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg my-3 focus:outline-none"
+                      placeholder="Enter Your Email...."
+                      onChange={(e) => setEmail(e.target.value)}
+                      value={email}
+                      required
+                    />
+                  </div>
                   <div className="relative">
                     <input
                       type={showPasswordIcon ? "password" : "text"}
                       id="default-search"
-                      className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none mt-3"
-                      placeholder="Confirm Your Password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none"
+                      placeholder="Enter Your Password...."
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                     <button
@@ -319,62 +307,94 @@ const Login = () => {
                       )}
                     </button>
                   </div>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="default-search"
-                      className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none mt-3"
-                      onChange={(e) => postDetails(e.target.files[0])}
+                  {state === "signup" && (
+                    <>
+                      <div className="relative">
+                        <input
+                          type={showPasswordIcon ? "password" : "text"}
+                          id="default-search"
+                          className="block w-full p-2 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none mt-3"
+                          placeholder="Confirm Your Password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="absolute end-2.5 bottom-2.5 text-slate-700"
+                          onClick={() => setShowPasswordIcon(!showPasswordIcon)}
+                        >
+                          {showPasswordIcon ? (
+                            <FaRegEye className="color-slate-700" />
+                          ) : (
+                            <FaRegEyeSlash className="color-slate-700" />
+                          )}
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="file"
+                          id="default-search"
+                          className="block w-full  text-sm font-normal text-gray-900 border border-gray-300 rounded-lg focus:outline-none mt-3"
+                          onChange={(e) => postDetails(e.target.files[0])}
+                        />
+                        <div className="absolute end-2.5 bottom-2.5 text-sm font-normal text-slate-700">
+                          Choose Profile Picture
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* --all inputs end-- */}
+            {/* --login and signup button--  */}
+            <div className="mt-2">
+              {state === "login" ? (
+                <span
+                  className="bg-slate-900 text-white p-2 px-4 rounded-md cursor-pointer"
+                  onClick={submitHandlerlogin}
+                >
+                  Login
+                </span>
+              ) : loading ? (
+                <button
+                  disabled
+                  type="button"
+                  className="bg-slate-900 text-white p-2 px-4 rounded-md cursor-pointer"
+                >
+                  <svg
+                    aria-hidden="true"
+                    role="status"
+                    className="inline w-4 h-4 me-3 text-white animate-spin"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="#E5E7EB"
                     />
-                    <div className="absolute end-2.5 bottom-2.5 text-sm font-normal text-slate-700">
-                      Choose Profile Picture
-                    </div>
-                  </div>
-                </>
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Loading...
+                </button>
+              ) : (
+                <span
+                  className="bg-slate-900 text-white p-2 px-4 rounded-md cursor-pointer"
+                  isLoading={loading.toString()}
+                  aria-disabled
+                  onClick={submitHandlerSignup}
+                >
+                  SignUp
+                </span>
               )}
             </div>
-            {state === "login" ? (
-              <span
-                className="bg-green-600 text-white p-2 px-4 rounded-md cursor-pointer"
-                onClick={submitHandlerlogin}
-              >
-                Login
-              </span>
-            ) : loading ? (
-              <button
-                disabled
-                type="button"
-                className="bg-green-600 text-white p-2 px-4 rounded-md cursor-pointer"
-              >
-                <svg
-                  aria-hidden="true"
-                  role="status"
-                  className="inline w-4 h-4 me-3 text-white animate-spin"
-                  viewBox="0 0 100 101"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="#E5E7EB"
-                  />
-                  <path
-                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                    fill="currentColor"
-                  />
-                </svg>
-                Loading...
-              </button>
-            ) : (
-              <span
-                className="bg-green-600 text-white p-2 px-4 rounded-md cursor-pointer"
-                isLoading={loading.toString()}
-                aria-disabled
-                onClick={submitHandlerSignup}
-              >
-                SignUp
-              </span>
-            )}
+            {/* ---login and signup button end--  */}
           </form>
           {/* --bottom-- */}
           <div className="mt-5">
@@ -382,7 +402,7 @@ const Login = () => {
               <p className="text-slate-700 text-sm">
                 Don't have an account?{" "}
                 <span
-                  className="font-bold cursor-pointer text-green-600"
+                  className="font-bold cursor-pointer text-slate-900 drop-shadow bg-slate-100 p-1 rounded-md"
                   onClick={() => setState("signup")}
                 >
                   Sign Up
@@ -392,7 +412,7 @@ const Login = () => {
               <p className="text-slate-700 text-sm">
                 Already have an account?{" "}
                 <span
-                  className="font-bold cursor-pointer text-green-600"
+                  className="font-bold cursor-pointer text-slate-900 bg-slate-100 drop-shadow p-1 rounded-md"
                   onClick={() => setState("login")}
                 >
                   Login
@@ -401,7 +421,7 @@ const Login = () => {
             )}
           </div>
         </div>
-      </section>
+      </motion.section>
       <ToastContainer />
     </div>
   );
