@@ -71,7 +71,7 @@ const MyChats = () => {
                   <div className="flex flex-wrap items-center gap-2">
                     {!chat.isGroupChat ? (
                       <img
-                        className="md:w-10 md:h-10 rounded-full shadow-md"
+                        className="md:w-10 sm:w-10 sm:h-10 md:h-10 w-10 h-10 rounded-full shadow-md"
                         src={
                           getSender(loggedUser, chat.users).pic
                             ? getSender(loggedUser, chat.users).pic
@@ -81,7 +81,7 @@ const MyChats = () => {
                       />
                     ) : (
                       <img
-                        className="md:w-10 md:h-10 rounded-full shadow-md"
+                        className="md:w-10 sm:w-10 sm:h-10 md:h-10 w-10 h-10  rounded-full shadow-md"
                         src={chat.groupPic ? chat.groupPic : ""}
                         alt="chat-pic"
                       />

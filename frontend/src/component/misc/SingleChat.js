@@ -11,12 +11,13 @@ import animationData from "../Animations/typing.json";
 import MessageLoading from "../Animations/myMessageLoading.json";
 import { motion, AnimatePresence } from "framer-motion";
 import { CiMenuKebab } from "react-icons/ci";
+import { FaArrowCircleLeft } from "react-icons/fa";
 
 const ENDPOINT = "http://localhost:5000";
 let socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const { user, selectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat } = ChatState();
   const [isOpen, setIsOpen] = useState(false);
   const [groupDetails, setGroupDetails] = useState([]);
   const [updateGroupBox, setUpdateGroupBox] = useState(false);
@@ -118,7 +119,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       socket.emit("stop typing", selectedChat._id);
     }, 3000); // 3 seconds
   };
-
+// --notification if receiver user not chatting with sender user -- 
   useEffect(() => {
     socket.on("messageR", (newMessageReceived) => {
       if (
@@ -149,9 +150,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         </div>
       ) : (
         <>
-          <div className="flex justify-between items-center p-4 text-black">
+          <div className="flex justify-between items-center md:p-4 text-black">
             {!selectedChat.isGroupChat ? (
               <div className="flex gap-2  items-center">
+                <FaArrowCircleLeft
+                  className="md:hidden visible text-slate-700"
+                  onClick={() => setSelectedChat()}
+                />
+
                 <img
                   className="w-10 h-10 rounded-full"
                   src={
@@ -191,7 +197,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 )}
               </div>
             ) : (
-              <div>{selectedChat.chatName}</div>
+              <div className="flex items-center gap-2">
+                {" "}
+                <FaArrowCircleLeft
+                  className="md:hidden visible text-slate-700"
+                  onClick={() => setSelectedChat()}
+                />
+                {selectedChat.chatName}
+              </div>
             )}
 
             <div>
