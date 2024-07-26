@@ -16,7 +16,7 @@ import { FaArrowCircleLeft } from "react-icons/fa";
 const ENDPOINT = "http://localhost:5000";
 let socket, selectedChatCompare;
 
-const SingleChat = ({ fetchAgain, setFetchAgain,setIsOpen }) => {
+const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     ChatState();
   const [isOpenProfile, setIsOpenProfile] = useState(false);
@@ -76,6 +76,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain,setIsOpen }) => {
       );
       setMessages(data);
       setLoading(false);
+      setFetchAgain(!fetchAgain);
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
       toast.error("Error fetching messages");
@@ -98,6 +99,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain,setIsOpen }) => {
           config
         );
         setNewMessage("");
+        setFetchAgain(!fetchAgain);
         socket.emit("new message", data);
         setMessages([...messages, data]);
         socket.emit("stop typing", selectedChat._id);
@@ -225,6 +227,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain,setIsOpen }) => {
             <UpdateGroupChat
               updateGroupBox={updateGroupBox}
               setUpdateGroupBox={setUpdateGroupBox}
+              fetchAgain={fetchAgain}
+              setFetchAgain={setFetchAgain}
             />
             <ProfileModel
               user={

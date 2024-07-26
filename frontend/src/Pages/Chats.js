@@ -24,7 +24,7 @@ const Chats = () => {
               selectedChat ? "hidden md:block" : "block"
             } bg-slate-950 rounded-l-xl`}
           >
-            {user && <MyChats setIsOpen={setIsOpen} />}
+            {user && <MyChats fetchAgain={fetchAgain} setIsOpen={setIsOpen} />}
           </div>
           <motion.div
             className={`flex-1 h-full ${

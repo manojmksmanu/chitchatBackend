@@ -102,7 +102,7 @@ const SideNavBar = ({ isOpen, setIsOpen }) => {
             {menuOpen && (
               <div
                 ref={menuRef}
-                className="absolute -right-36 -top-28 mt-2 max-w-36 bg-white border border-gray-200 rounded-md shadow-lg"
+                className="absolute -right-36 -top-28 mt-2 max-w-ful bg-white border border-gray-200 rounded-md shadow-lg"
               >
                 <ul className="p-2">
                   <li className="pl-2 text-sm text-slate-800 hover:bg-gray-100 cursor-pointer">

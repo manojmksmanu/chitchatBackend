@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CiMenuBurger } from "react-icons/ci";
 import { IoNotificationsCircleOutline } from "react-icons/io5";
 
-const MyChats = ({ isOpen, setIsOpen }) => {
+const MyChats = ({ setIsOpen, fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState(null); // Set initial state to null
   const { user, setChats, chats, setSelectedChat, selectedChat } = ChatState();
 
@@ -31,8 +31,9 @@ const MyChats = ({ isOpen, setIsOpen }) => {
   };
 
   useEffect(() => {
+    // setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-  }, [user]);
+  }, [fetchAgain]);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));

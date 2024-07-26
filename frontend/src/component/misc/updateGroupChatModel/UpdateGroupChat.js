@@ -4,7 +4,12 @@ import { ChatState } from "../../../context/ChatProvider";
 import SelectedUserBadge from "../../misc/groupChatModel/SelectedUserBadge";
 import axios from "axios";
 import Avtar from "../chatAvtar/Avtar";
-const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
+const UpdateGroupChat = ({
+  updateGroupBox,
+  setUpdateGroupBox,
+  setFetchAgain,
+  fetchAgain,
+}) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
   const [searchResult, setSearchResult] = useState();
   const [rename, setRename] = useState("");
@@ -30,6 +35,7 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
       );
       setSelectedChat(data);
       toast.success(`group name updated`);
+      setFetchAgain(!fetchAgain);
       setRename("");
       setLoading(false);
     } catch (error) {
@@ -75,6 +81,38 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
         isClosable: true,
         position: "bottom-left",
       });
+    }
+  };
+  const handleLeaveUser = async (u) => {
+    if (user._id === u._id) {
+      setRemoveLoading(true);
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+        const { data } = await axios.put(
+          "http://localhost:5000/api/chat/groupremove",
+          {
+            chatId: selectedChat._id,
+            userId: u._id,
+          },
+          config
+        );
+        u._id === user._id ? setSelectedChat() : setSelectedChat(data);
+        toast.success(`You Just Leave The group : ${selectedChat.chatName}`);
+        setRemoveLoading(false);
+      } catch (error) {
+        toast({
+          title: "Error Occurred!",
+          description: "Failed to Rename",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom-left",
+        });
+      }
     }
   };
   const handleSearchUser = async (u) => {
@@ -164,7 +202,7 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
             ) : (
               <span
                 className="bg-slate-800 text-white text-xs p-1 rounded-md cursor-pointer"
-                onClick={() => handleRemoveUser(user)}
+                onClick={() => handleLeaveUser(user)}
               >
                 {" "}
                 Leave Group
