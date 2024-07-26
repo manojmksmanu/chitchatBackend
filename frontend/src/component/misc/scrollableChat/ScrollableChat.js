@@ -1,19 +1,11 @@
 import React from "react";
 import ScrollableFeed from "react-scrollable-feed";
-import {
-  isLastMessage,
-  isSameSender,
-  isSameSenderMargin,
-  isSameUser,
-} from "../../../config/ChatLogic";
 import { ChatState } from "../../../context/ChatProvider";
 import { motion } from "framer-motion";
 import { format, isSameDay } from "date-fns";
 
 const ScrollableChat = ({ messages }) => {
   const { user, selectedChat } = ChatState();
-  console.log(selectedChat);
-  console.log(messages);
   return (
     <div className="flex overflow-auto flex-col h-full all_messages_section">
       <ScrollableFeed className="flex overflow-auto flex-col h-full p-1">

@@ -20,7 +20,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     ChatState();
   const [isOpenProfile, setIsOpenProfile] = useState(false);
-  const [groupDetails, setGroupDetails] = useState([]);
+  // const [groupDetails, setGroupDetails] = useState([]);
   const [updateGroupBox, setUpdateGroupBox] = useState(false);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  console.log(messages);
+
   const typingIndicatorOptions = {
     loop: true,
     autoplay: true,
@@ -83,7 +83,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
       setLoading(false);
     }
   };
-  console.log(notification, "---");
   const sendMessage = async (e) => {
     if (e.key === "Enter" && newMessage.trim()) {
       try {
@@ -124,26 +123,28 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
   // --notification if receiver user not chatting with sender user --
   useEffect(() => {
     socket.on("messageR", (newMessageReceived) => {
+      console.log(newMessageReceived, "newR");
+      newMessageReceived ? setFetchAgain(!fetchAgain) : setFetchAgain(!fetchAgain);
       if (
         !selectedChatCompare ||
-        selectedChatCompare._id !== newMessageReceived.chat
+        selectedChatCompare.chat !== newMessageReceived.chat
       ) {
-        if (!notification.includes(newMessageReceived)) {
-          setNotification([newMessageReceived, ...notification]);
-        }
+        // if (!notification.includes(newMessageReceived)) {
+        //   setNotification(newMessageReceived);
+        // }
       } else {
         setMessages([...messages, newMessageReceived]);
       }
     });
   }, [messages]);
-
-  useEffect(() => {
-    if (selectedChat && selectedChat.isGroupChat) {
-      setGroupDetails(selectedChat);
-    } else {
-      setGroupDetails([]);
-    }
-  }, [selectedChat]);
+  console.log(notification, "notification");
+  // useEffect(() => {
+  //   if (selectedChat && selectedChat.isGroupChat) {
+  //     setGroupDetails(selectedChat);
+  //   } else {
+  //     setGroupDetails([]);
+  //   }
+  // }, [selectedChat]);
 
   return (
     <div className="h-full pb-1 flex flex-col w-full">
@@ -158,7 +159,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
             {!selectedChat.isGroupChat ? (
               <div className="flex gap-2  items-center">
                 <FaArrowCircleLeft
-                  className="md:hidden visible text-slate-700"
+                  className="md:hidden visible text-slate-700 cursor-pointer"
                   onClick={() => setSelectedChat()}
                 />
 
