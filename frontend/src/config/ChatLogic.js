@@ -3,7 +3,21 @@ export const getSender = (loggedUser, users) => {
     return users[0]._id === loggedUser._id ? users[1] : users[0];
   }
 };
+// export const getSender = (loggedUser, users) => {
+//   if (!loggedUser || !Array.isArray(users) || users.length < 2) {
+//     // Return null or handle the error as needed
+//     return null;
+//   }
 
+//   // Ensure users have the expected properties and ids
+//   const [user1, user2] = users;
+
+//   if (user1._id === loggedUser._id) {
+//     return user2;
+//   }
+
+//   return user1;
+// };
 export const isSameSender = (messages, m, i, userId) => {
   return (
     i < messages.length - 1 &&

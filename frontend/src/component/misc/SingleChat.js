@@ -16,9 +16,10 @@ import { FaArrowCircleLeft } from "react-icons/fa";
 const ENDPOINT = "http://localhost:5000";
 let socket, selectedChatCompare;
 
-const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const { user, selectedChat, setSelectedChat } = ChatState();
-  const [isOpen, setIsOpen] = useState(false);
+const SingleChat = ({ fetchAgain, setFetchAgain,setIsOpen }) => {
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
+  const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [groupDetails, setGroupDetails] = useState([]);
   const [updateGroupBox, setUpdateGroupBox] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -27,7 +28,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-
+  console.log(messages);
   const typingIndicatorOptions = {
     loop: true,
     autoplay: true,
@@ -44,7 +45,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     socket.on("connection", () => {
       setSocketConnected(true);
-      console.log("Socket connected");
     });
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
@@ -82,7 +82,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(false);
     }
   };
-
+  console.log(notification, "---");
   const sendMessage = async (e) => {
     if (e.key === "Enter" && newMessage.trim()) {
       try {
@@ -119,14 +119,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       socket.emit("stop typing", selectedChat._id);
     }, 3000); // 3 seconds
   };
-// --notification if receiver user not chatting with sender user -- 
+  // --notification if receiver user not chatting with sender user --
   useEffect(() => {
     socket.on("messageR", (newMessageReceived) => {
       if (
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageReceived.chat
       ) {
-        // Handle notification logic
+        if (!notification.includes(newMessageReceived)) {
+          setNotification([newMessageReceived, ...notification]);
+        }
       } else {
         setMessages([...messages, newMessageReceived]);
       }
@@ -211,7 +213,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               {!selectedChat.isGroupChat ? (
                 <CiMenuKebab
                   className="cursor-pointer"
-                  onClick={() => setIsOpen(true)}
+                  onClick={() => setIsOpenProfile(true)}
                 />
               ) : (
                 <CiMenuKebab
@@ -229,8 +231,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 selectedChat.users &&
                 selectedChat.users.find((u) => u._id !== user._id)
               }
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
+              isOpen={isOpenProfile}
+              setIsOpen={setIsOpenProfile}
             />
           </div>
           <div className="flex flex-col flex-grow overflow-hidden ">

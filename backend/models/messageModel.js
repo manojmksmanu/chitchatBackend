@@ -6,7 +6,7 @@ const messageModel = mongoose.Schema(
     chat: { type: String },
   },
   {
-    timestamp: true,
+    timestamps: true,
   }
 );
 

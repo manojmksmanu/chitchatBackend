@@ -6,7 +6,7 @@ const ProfileModel = ({ isOpen, setIsOpen, user }) => {
   }
   console.log(isOpen);
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
         <div className="flex justify-between items-center border-b pb-3">
           <div></div>

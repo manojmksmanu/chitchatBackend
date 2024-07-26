@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SelectedUserBadge from "./SelectedUserBadge";
 
-const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
+const GroupChat = ({ openGroupBox, setOpenGroupBox, setIsOpen }) => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -127,17 +127,19 @@ const GroupChat = ({ openGroupBox, setOpenGroupBox, groupDetails }) => {
       setLoading(false);
     }
   };
-
   if (!openGroupBox) return null;
-
+  const handleClickCross = () => {
+    setOpenGroupBox(false);
+    setIsOpen(false);
+  };
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 md:p-0 p-4">
       <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
         <div className="flex justify-between items-center border-b pb-3">
           <h3 className="text-lg font-medium">Create Group Chat</h3>
           <button
-            onClick={() => setOpenGroupBox(false)}
-            className="text-gray-500 hover:text-gray-700"
+            onClick={handleClickCross}
+            className="text-gray-500 text-2xl hover:text-gray-700"
           >
             &times;
           </button>

@@ -5,8 +5,7 @@ import SelectedUserBadge from "../../misc/groupChatModel/SelectedUserBadge";
 import axios from "axios";
 import Avtar from "../chatAvtar/Avtar";
 const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
-  const { user, selectedChat, setSelectedChat, chat, setChats } = ChatState();
-  // console.log(selectedChat);
+  const { user, selectedChat, setSelectedChat } = ChatState();
   const [searchResult, setSearchResult] = useState();
   const [rename, setRename] = useState("");
   const [loading, setLoading] = useState(false);
@@ -149,7 +148,7 @@ const UpdateGroupChat = ({ updateGroupBox, setUpdateGroupBox }) => {
   }
   console.log(selectedChat);
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 md:p-0 p-4">
       <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
         <div className="flex justify-between items-center border-b pb-3">
           <div className="flex items-center gap-2">

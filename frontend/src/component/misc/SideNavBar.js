@@ -1,26 +1,39 @@
-import React, { useState } from "react";
-import { CiChat1, CiSearch } from "react-icons/ci";
-import { FaSearch } from "react-icons/fa";
-import { ChatState } from "../../context/ChatProvider";
-import { useNavigate } from "react-router-dom";
-import SearchSideBar from "./navbarmisc/SearchSideBar";
+import React, { useState, useRef, useEffect } from "react";
+import { CiSearch } from "react-icons/ci";
 import { MdGroupAdd } from "react-icons/md";
-import GroupChat from "./groupChatModel/GroupChat";
-import { FaUserGroup } from "react-icons/fa6";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { ChatState } from "../../context/ChatProvider";
+import SearchSideBar from "./navbarmisc/SearchSideBar";
+import GroupChat from "./groupChatModel/GroupChat";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 const SideNavBar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
   const { user, setUser } = ChatState();
-
   const [openSearchBar, setOpenSearchBar] = useState(false);
   const [openGroupBox, setOpenGroupBox] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const Logout = () => {
     setUser(null);
     localStorage.removeItem("userInfo");
     navigate("/");
   };
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -55,96 +68,70 @@ const SideNavBar = ({ isOpen, setIsOpen }) => {
             </motion.span>
           </div>
           <ul>
-            {/* <li className=" cursor-pointer">
-              <CiChat1 className="text-2xl text-slate-500 hover:text-slate-50" />
-            </li>
-            <li className=" cursor-pointer">
-              <FaUserGroup className="text-2xl text-slate-500 hover:text-slate-50" />
-            </li>
-            <li></li> */}
             <li
               onClick={() => setOpenSearchBar(true)}
-              className=" cursor-pointer"
+              className="cursor-pointer"
             >
               <CiSearch className="text-2xl text-slate-500 hover:text-slate-50 mt-2" />
             </li>
             <li
               onClick={() => setOpenGroupBox(true)}
-              className=" cursor-pointer"
+              className="cursor-pointer"
             >
               <MdGroupAdd className="text-2xl text-slate-500 hover:text-slate-50 mt-2" />
             </li>
           </ul>
-          {/* --user-- profile pic */}
-          <div>
-            <button
-              type="button"
-              data-tooltip-target="tooltip-default"
-              className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-              id="user-menu-button"
-              aria-expanded="false"
-              data-dropdown-toggle="user-dropdown"
-              data-dropdown-placement="bottom"
-            >
-              {/* <span className="sr-only">Open user menu</span> */}
-              <img
-                className="w-8 h-8 rounded-full"
-                src={user && user.pic}
-                alt="user photo"
-              />
-            </button>
-
-            <div
-              id="tooltip-default"
-              role="tooltip"
-              class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-slate-500 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
-            >
-              {user && user.name}
-              <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
-            {/* <!-- on click menu for profile --> */}
-            <div
-              className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-              id="user-dropdown"
-            >
-              <div className="px-4 py-3">
-                <span className="block text-sm text-gray-900 dark:text-white">
-                  {user && user.name}
-                </span>
-                <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
-                  {user && user.email}
-                </span>
+          <div className="relative inline-block text-left">
+            {/* User profile pic */}
+            <div>
+              <div
+                onClick={() => setMenuOpen((prev) => !prev)} // Toggle menu visibility
+                className="flex items-center p-1 rounded-md bg-white focus:outline-none cursor-pointer"
+                data-tooltip-id="my-tooltip-1"
+              >
+                <img className="w-5 h-5" src={user && user.pic} alt="Profile" />
               </div>
-              <ul className="py-2" aria-labelledby="user-menu-button">
-                <li>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >
-                    Dashboard
-                  </a>
-                </li>
-                <li>
-                  <span
-                    onClick={() => Logout()}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white cursor-pointer"
-                  >
-                    LogOut
-                  </span>
-                </li>
-              </ul>
             </div>
-            {/* <!--end  on click menu for profile --> */}
+            <ReactTooltip
+              id="my-tooltip-1"
+              place="bottom"
+              content={user && user.name}
+            />
+
+            {/* Menu */}
+            {menuOpen && (
+              <div
+                ref={menuRef}
+                className="absolute -right-36 -top-28 mt-2 max-w-36 bg-white border border-gray-200 rounded-md shadow-lg"
+              >
+                <ul className="p-2">
+                  <li className="pl-2 text-sm text-slate-800 hover:bg-gray-100 cursor-pointer">
+                    {user && user.name}
+                  </li>
+                  <li className="pl-2 text-sm text-slate-800 hover:bg-gray-100 cursor-pointer">
+                    {user && user.email}
+                  </li>
+                  <li
+                    className="p-2 hover:bg-gray-700 cursor-pointer bg-slate-900 rounded-md mt-2"
+                    onClick={() => Logout()}
+                  >
+                    Logout
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>
       <GroupChat
         openGroupBox={openGroupBox}
         setOpenGroupBox={setOpenGroupBox}
+        setIsOpen={setIsOpen}
       />
       <SearchSideBar
         openSearchBar={openSearchBar}
         setOpenSearchBar={setOpenSearchBar}
+        setIsOpen={setIsOpen}
       />
       {/* Overlay for mobile */}
       {isOpen && (
