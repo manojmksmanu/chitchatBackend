@@ -140,11 +140,11 @@ const SearchSideBar = ({ openSearchBar, setOpenSearchBar }) => {
               ""
             )}
             {searchResult
-              ? searchResult.map((user) => {
+              ? searchResult.map((u) => {
                   return (
-                    <div key={user._id} onClick={() => accessChat(user._id)}>
+                    <div key={u._id} onClick={() => accessChat(u._id)}>
                       <Avtar
-                        data={user}
+                        data={u}
                         // handleFunction={(e) => accessChat(e._id)}
                         // onClick={()=>accessChat()}
                       />

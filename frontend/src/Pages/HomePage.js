@@ -14,7 +14,6 @@ const HomePage = () => {
   return (
     <div className="overflow-y-auto">
         <Login />
-    
     </div>
   );
 };

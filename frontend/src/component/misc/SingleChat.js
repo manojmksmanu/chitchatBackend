@@ -22,7 +22,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
   const [isOpenProfile, setIsOpenProfile] = useState(false);
   // const [groupDetails, setGroupDetails] = useState([]);
   const [updateGroupBox, setUpdateGroupBox] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState();
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
@@ -52,8 +52,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
     return () => {
       socket.off("typing");
       socket.off("stop typing");
+        socket.off("connection");
+      
+        socket.off("new message");
+        socket.off("messageR");
       if (typingTimeout) clearTimeout(typingTimeout);
     };
+   
   }, [user]);
 
   useEffect(() => {
@@ -83,30 +88,33 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
       setLoading(false);
     }
   };
-  const sendMessage = async (e) => {
-    if (e.key === "Enter" && newMessage.trim()) {
-      try {
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-        };
-        const { data } = await axios.post(
-          "http://localhost:5000/api/message/message",
-          { content: newMessage, chatId: selectedChat._id },
-          config
-        );
-        setNewMessage("");
-        setFetchAgain(!fetchAgain);
-        socket.emit("new message", data);
-        setMessages([...messages, data]);
-        socket.emit("stop typing", selectedChat._id);
-      } catch (error) {
-        toast.error("Error sending message");
-      }
+const sendMessage = async (e) => {
+  if (e.key === "Enter" && newMessage.trim()) {
+    e.preventDefault(); // Prevent default behavior if it's a form submit
+
+    console.log("Sending message:", newMessage);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.post(
+        "http://localhost:5000/api/message/message",
+        { content: newMessage, chatId: selectedChat._id },
+        config
+      );
+      setNewMessage("");
+      socket.emit("new message", data);
+      setMessages((prevMessages) => [...prevMessages, data]); // Use functional update
+      socket.emit("stop typing", selectedChat._id);
+    } catch (error) {
+      toast.error("Error sending message");
     }
-  };
+  }
+};
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
@@ -124,7 +132,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
   useEffect(() => {
     socket.on("messageR", (newMessageReceived) => {
       console.log(newMessageReceived, "newR");
-      newMessageReceived ? setFetchAgain(!fetchAgain) : setFetchAgain(!fetchAgain);
+      newMessageReceived
+        ? setFetchAgain(!fetchAgain)
+        : setFetchAgain(!fetchAgain);
       if (
         !selectedChatCompare ||
         selectedChatCompare.chat !== newMessageReceived.chat
@@ -136,7 +146,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, setIsOpen }) => {
         setMessages([...messages, newMessageReceived]);
       }
     });
-  }, [messages]);
+  }, [c]);
   console.log(notification, "notification");
   // useEffect(() => {
   //   if (selectedChat && selectedChat.isGroupChat) {

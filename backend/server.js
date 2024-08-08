@@ -14,9 +14,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// app.get("/", (req, res) => {
-//   res.send("API is running");
-// });
+app.get("/status", (req, res) => {
+   res.json({ status: "API is running" });
+});
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
 
 app.use("/api", userRoutes);
 app.use("/api/chat", chatRoutes);
@@ -49,7 +52,7 @@ const server = app.listen(5000, () => {
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:5173",
   },
 });
 
@@ -69,6 +72,7 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (newMessageRecieved) => {
     io.to(newMessageRecieved.chat).emit("messageR", newMessageRecieved);
+    console.log(newMessageRecieved);
   });
 
   socket.on("typing", (room) => {
