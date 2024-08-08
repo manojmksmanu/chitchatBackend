@@ -146,7 +146,7 @@ const sendMessage = async (e) => {
         setMessages([...messages, newMessageReceived]);
       }
     });
-  }, [c]);
+  }, [messages]);
   console.log(notification, "notification");
   // useEffect(() => {
   //   if (selectedChat && selectedChat.isGroupChat) {
