@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/status", (req, res) => {
-   res.json({ status: "API is running" });
+   res.send({ status: "API is running" });
 });
 app.get("/", (req, res) => {
   res.send("API is running");
