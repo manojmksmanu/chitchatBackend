@@ -65,7 +65,7 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (newMessageRecieved) => {
     io.to(newMessageRecieved.chat).emit("messageR", newMessageRecieved);
-    console.log(newMessageRecieved);
+    console.log(newMessageRecieved,"socketmessage");
   });
 
   socket.on("typing", (room) => {
