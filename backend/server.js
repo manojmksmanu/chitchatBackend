@@ -8,23 +8,20 @@ const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 dotenv.config();
 connectDB();
-const allowedOrigins = ["https://chit-chat-newfrontend.vercel.app"];
+const allowedOrigins = ["*", "https://chit-chat-newfrontend.vercel.app"];
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 app.get("/status", (req, res) => {
-   res.send({ status: "API is running" });
+  res.send({ status: "API is running" });
 });
 app.get("/", (req, res) => {
   res.send("API is running");
 });
-
 app.use("/api", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
-
-
 app.use(notFound);
 app.use(errorHandler);
 
