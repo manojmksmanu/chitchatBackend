@@ -16,7 +16,7 @@ app.use(express.json());
 // Configure CORS to allow your Vercel frontend
 app.use(
   cors({
-    origin: "https://chit-chat-newfrontend-cv6m.vercel.app", // Replace with your Vercel frontend URL
+    origin: "*", // Replace with your Vercel frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
     credentials: true, // Allow cookies to be sent
   })
@@ -43,7 +43,7 @@ const server = app.listen(5000, () => {
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "https://chit-chat-newfrontend-cv6m.vercel.app", // Your frontend URL
+    origin:"*", // Your frontend URL
     methods: ["GET", "POST"],
     credentials: true,
   },
