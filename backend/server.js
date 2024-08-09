@@ -11,7 +11,12 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(cors());
-
+app.use(
+  cors({
+    origin: "https://chit-chat-newfrontend-yjiu.vercel.app", // Replace with your Vercel URL
+    credentials: true, // Allow cookies to be sent with requests
+  })
+);
 app.get("/status", (req, res) => {
   res.send({ status: "API is running" });
 });
