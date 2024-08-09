@@ -10,7 +10,17 @@ dotenv.config();
 connectDB();
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+
+
+// Configure CORS to allow your Vercel frontend
+app.use(
+  cors({
+    origin: "https://chit-chat-newfrontend-cv6m.vercel.app", // Replace with your Vercel frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
+    credentials: true, // Allow cookies to be sent
+  })
+);
 
 app.get("/status", (req, res) => {
   res.send({ status: "API is running" });
@@ -29,26 +39,13 @@ const server = app.listen(5000, () => {
   console.log(`Server started on port ${PORT}`);
 });
 
-// const io = require("socket.io")(server, {
-//   pingTimeout: 60000,
-//   cors: {
-//     origin: (origin, callback) => {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//   },
-// });
+
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: [
-      "*",
-      "http://localhost:5173",
-      "https://chit-chat-newfrontend-yjiu.vercel.app/",
-    ],
+    origin: "https://chit-chat-newfrontend-cv6m.vercel.app", // Your frontend URL
+    methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
