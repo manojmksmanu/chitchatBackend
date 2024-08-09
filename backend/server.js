@@ -8,7 +8,6 @@ const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 dotenv.config();
 connectDB();
-const allowedOrigins = ["*", "https://chit-chat-newfrontend.vercel.app"];
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -45,7 +44,7 @@ const server = app.listen(5000, () => {
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "*",
+    origin: ["*", "http://localhost:5173"],
   },
 });
 
@@ -65,7 +64,7 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (newMessageRecieved) => {
     io.to(newMessageRecieved.chat).emit("messageR", newMessageRecieved);
-    console.log(newMessageRecieved,"socketmessage");
+    console.log(newMessageRecieved, "socketmessage");
   });
 
   socket.on("typing", (room) => {
