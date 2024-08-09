@@ -30,16 +30,22 @@ const server = app.listen(5000, () => {
   console.log(`Server started on port ${PORT}`);
 });
 
+// const io = require("socket.io")(server, {
+//   pingTimeout: 60000,
+//   cors: {
+//     origin: (origin, callback) => {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//   },
+// });
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://chit-chat-newfrontend.vercel.app",
   },
 });
 
